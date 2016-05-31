@@ -1,0 +1,46 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="cfp-events">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      span {
+        @apply(--paper-font-body1);
+      }
+    </style>
+
+    <ul>
+      <template is="dom-repeat" items="{{events}}">
+        <li><span>{{item}}</span></li>
+      </template>
+    </ul>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'cfp-events',
+
+        properties: {
+          events: {
+            type: Array,
+            notify: true
+          }
+        },
+
+        ready: function() {
+          this.events = [
+            'DevFest Vienna',
+            'droidcon Vienna'
+          ];
+        }
+      });
+    })();
+  </script>
+</dom-module>

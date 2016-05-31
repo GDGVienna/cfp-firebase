@@ -1,0 +1,53 @@
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<dom-module id="cfp-login">
+  <template>
+    <firebase-auth
+      id="firebaseLogin"
+      user="{{user}}"
+      status-known="{{statusKnown}}"
+      provider="{{provider}}">
+    </firebase-auth>
+    <div hidden$="[[user]]">
+      <paper-button on-tap="loginWithGoogle">Login with Google</paper-button>
+      <paper-button on-tap="loginWithTwitter">Login with Twitter</paper-button>
+      <paper-button on-tap="loginWithGithub">Login with GitHub</paper-button>
+    <paper-icon-button src="[[user.photoURL]]"></paper-icon-button>
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: 'cfp-login',
+
+    properties: {
+      user: {
+        type: Object,
+        value: null
+      },
+      provider: {
+        type: String,
+        value: 'google'
+      }
+    },
+    loginWithGoogle: function() {
+      this.provider = 'google';
+      this.$.firebaseLogin.signInWithPopup();
+    },
+    loginWithTwitter: function() {
+      this.provider = 'twitter';
+      this.$.firebaseLogin.signInWithPopup();
+    },
+    loginWithGithub: function() {
+      this.provider = 'github';
+      this.$.firebaseLogin.signInWithPopup();
+    },
+    loginWithPassword: function() {
+      this.provider = 'password';
+      params = {
+        'email': this.email,
+        'password': this.password
+      };
+      this.$.firebaseLogin.login(params);
+    }
+  });
+</script>
+    }
