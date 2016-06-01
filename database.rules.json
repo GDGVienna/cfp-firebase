@@ -1,4 +1,87 @@
 {
-  ".read": true,
-  ".write": true
+  "rules": {
+    "admin": {
+      "$uid": {
+        ".validate": "newData.isBoolean()",
+        ".read": "auth != null && root.child('admin').child(auth.uid).val() == true",
+        ".write": "auth != null && newData.parent().parent().child('admin').child(auth.uid).val() == true"
+      }
+    },
+    "conference": {
+      "$conf": {
+        ".validate": "newData.hasChildren(['name', 'description', 'cfpFrom', 'cfpTo'])",
+        "name": {
+          ".validate": "newData.isString()"
+        },
+        "description": {
+          ".validate": "newData.isString()"
+        },
+        "cfpFrom": {
+          ".validate": "newData.isNumber()"
+        },
+        "cfpTo": {
+          ".validate": "newData.isNumber()"
+        },
+        "reviewer": {
+          "$key1": {
+            ".validate": "newData.isBoolean()"
+          }
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        ".read": "true",
+        ".write": "auth != null && newData.parent().parent().child('admin').child(auth.uid).val() == true"
+      }
+    },
+    "profile": {
+      "$uid": {
+        ".validate": "newData.hasChildren(['bio', 'name', 'surname', 'email'])",
+        "bio": {
+          ".validate": "newData.isString()"
+        },
+        "name": {
+          ".validate": "newData.isString()"
+        },
+        "surname": {
+          ".validate": "newData.isString()"
+        },
+        "email": {
+          ".validate": "newData.isString() && newData.val().matches(/[\\w+-]+@([\\w-]+\\.)+[\\w-]+/i)"
+        },
+        "$other": {
+          ".validate": "false"
+        },
+        ".write": "data.val() == null && (auth != null && auth.uid == $uid) || data.val() != null && newData.val() != null && (auth != null && newData.parent().parent().child('admin').child(auth.uid).val() == true || auth != null && auth.uid == $uid)",
+        ".read": "auth != null && root.child('admin').child(auth.uid).val() == true || auth != null && auth.uid == $uid"
+      }
+    },
+    "proposal": {
+      "$conf": {
+        "$id": {
+          ".validate": "newData.hasChildren(['speaker', 'title', 'abstract', 'duration', 'comment'])",
+          "speaker": {
+            ".validate": "newData.isString()"
+          },
+          "title": {
+            ".validate": "newData.isString()"
+          },
+          "abstract": {
+            ".validate": "newData.isString()"
+          },
+          "duration": {
+            ".validate": "newData.isNumber() && (newData.val() == 20 || newData.val() == 45)"
+          },
+          "comment": {
+            ".validate": "newData.isString()"
+          },
+          "$other": {
+            ".validate": "false"
+          },
+          ".write": "data.val() == null && (auth != null && newData.parent().parent().parent().child('admin').child(auth.uid).val() == true || newData.parent().parent().parent().child('conference').child($conf).child('cfpFrom').val() < now && newData.parent().parent().parent().child('conference').child($conf).child('cfpTo').val() > now) || data.val() != null && newData.val() != null && (auth != null && newData.parent().parent().parent().child('admin').child(auth.uid).val() == true || newData.parent().parent().parent().child('conference').child($conf).child('cfpFrom').val() < now && newData.parent().parent().parent().child('conference').child($conf).child('cfpTo').val() > now && (auth != null && auth.uid == newData.child('speaker').val())) || data.val() != null && newData.val() == null && (auth != null && newData.parent().parent().parent().child('admin').child(auth.uid).val() == true || newData.parent().parent().parent().child('conference').child($conf).child('cfpFrom').val() < now && newData.parent().parent().parent().child('conference').child($conf).child('cfpTo').val() > now && (auth != null && auth.uid == newData.child('speaker').val()))",
+          ".read": "auth != null && root.child('admin').child(auth.uid).val() == true || auth != null && root.child('conference').child($conf).child('reviewer').child(auth.uid).val() == true || auth != null && auth.uid == data.child('speaker').val()"
+        }
+      }
+    }
+  }
 }

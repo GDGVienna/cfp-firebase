@@ -1,0 +1,83 @@
+// Super-User: isAdmin
+isAdmin() {
+  auth != null && root["admin"][auth.uid]
+}
+
+// Validate a uid against the currently logged in user
+isCurrentUser(uid) {
+  auth != null && auth.uid == uid
+}
+
+// get conference for id
+// hardcoded path: /conference/$confid
+confById(confid) {
+  root["conference"][confid]
+}
+  
+// Check if current user is a reviewer
+isReviewer(confid) {
+  auth != null && confById(confid).reviewer[auth.uid]
+}
+
+// Check for a currently open conference
+isConfOpen(confid) {
+  confById(confid).cfpFrom < now && confById(confid).cfpTo > now
+}
+
+// Simple email validation - not bullet proof
+type Email extends String {
+  validate() { this.matches(/[\w+-]+@([\w-]+\.)+[\w-]+/i) }
+}
+
+// Allowed duration values for a conference
+type Duration extends Number {
+  validate() { this == 20 || this == 45 }
+}
+
+type Profile {
+  bio: String,
+  name: String,
+  surname: String,
+  email: Email,
+  create() { isCurrentUser(key()) }
+  read() { isAdmin() || isCurrentUser(key()) }
+  update() { isAdmin() || isCurrentUser(key()) }
+}
+
+type Conference {
+  name: String,
+  description: String,
+  cfpFrom: Number,
+  cfpTo: Number,
+  reviewer: Boolean[],
+  write() { isAdmin() }
+  read() { true }
+}
+
+type Proposal {
+  speaker: String,
+  title: String,
+  abstract: String,
+  duration: Duration,
+  comment: String,
+}
+
+path /admin/{uid} is Boolean {
+  write() { isAdmin() }
+  read() { isAdmin() }
+}
+
+path /conference/{conf} is Conference;
+
+path /profile/{uid} is Profile;
+
+// Allow the admin to always change
+// During opening time everyone can create
+// During opening time only the author can change
+// Only the author or a reviewer can read
+path /proposal/{conf}/{id} is Proposal {
+  create() { isAdmin() || isConfOpen(conf) }
+  update() { isAdmin() || (isConfOpen(conf) && isCurrentUser(this.speaker)) }
+  delete() { isAdmin() || (isConfOpen(conf) && isCurrentUser(this.speaker)) }
+  read() { isAdmin() || isReviewer(conf) || isCurrentUser(this.speaker) }
+}
