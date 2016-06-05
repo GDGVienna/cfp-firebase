@@ -66,54 +66,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <!-- connect with firebase -->
   <firebase-app
+    name="cfp-app"
     auth-domain="cfp-manager-40b9c.firebaseapp.com"
     database-url="https://cfp-manager-40b9c.firebaseio.com"
     storage-bucket="cfp-manager-40b9c.appspot.com"
     api-key="AIzaSyDO1O2_1XBxg3MGlCODonVMBoueBIdK1vs">
   </firebase-app>
+  <firebase-auth-manager app-name="cfp-app"></firebase-auth-manager>
+  <firebase-auth-dialog entry-animation="scale-up-animation"
+                        exit-animation="fade-out-animation"
+                        providers='["twitter", "github", "google"]'
+                        modal>
+        <h2 title-sign-up>Sign-Up Dialog</h2>
+        <h2 title-sign-in>Sign-In Dialog</h2>
+        <b introduction>-- Welcome to the CfP Manager --</b>
+        <b provider>-- Sign-In with one of the following provider(s): --</b>
+        <b user>-- or provide your email and password : --</b>
+  </firebase-auth-dialog>
 
   <template is="dom-bind" id="app">
-
-    <paper-drawer-panel id="paperDrawerPanel" responsive-width="840px">
-      <!-- Drawer Scroll Header Panel -->
-      <paper-scroll-header-panel drawer fixed>
-
-        <!-- Drawer Toolbar -->
-        <paper-toolbar id="drawerToolbar">
-          <span class="menu-name">Menu</span>
-        </paper-toolbar>
-
-        <!-- Drawer Content -->
-        <cfp-login></cfp-login>
-
-        <paper-menu class="app-menu" attr-for-selected="data-route" selected="[[route]]">
-          <a data-route="events" href="{{baseUrl}}">
-            <iron-icon icon="event"></iron-icon>
-            <span>Events</span>
-          </a>
-
-          <a data-route="submitters" href="{{baseUrl}}submitters">
-            <iron-icon icon="android"></iron-icon>
-            <span>Submitters</span>
-          </a>
-
-          <a data-route="proposals" href="{{baseUrl}}proposals">
-            <iron-icon icon="assignment"></iron-icon>
-            <span>Proposals</span>
-          </a>
-
-          <a data-route="report" href="{{baseUrl}}report">
-            <iron-icon icon="assessment"></iron-icon>
-            <span>Report</span>
-          </a>
-        </paper-menu>
-      </paper-scroll-header-panel>
 
       <!-- Main Area -->
       <paper-scroll-header-panel main id="headerPanelMain" condenses keep-condensed-header>
         <!-- Main Toolbar -->
         <paper-toolbar id="mainToolbar" class="tall">
-          <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
 
           <span class="space"></span>
 
@@ -124,8 +100,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           <!-- Application sub title -->
           <div class="bottom bottom-container">
-            <div class="bottom-title">Managing event talk proposals</div>
+            <div class="bottom-title">Event talk proposals</div>
           </div>
+
+          <!-- Login / profile menu -->
+          <firebase-account-menu></firebase-account-menu>
 
         </paper-toolbar>
 
@@ -193,7 +172,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </iron-pages>
         </div>
       </paper-scroll-header-panel>
-    </paper-drawer-panel>
 
     <paper-toast id="toast">
       <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>

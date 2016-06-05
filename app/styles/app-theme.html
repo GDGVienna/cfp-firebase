@@ -40,11 +40,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     /* Components */
 
-    /* paper-drawer-panel */
-    --drawer-menu-color: #ffffff;
-    --drawer-border-color: 1px solid #ccc;
-    --drawer-toolbar-border-color: 1px solid rgba(0, 0, 0, 0.22);
-
     /* paper-menu */
     --paper-menu-background-color: #fff;
     --menu-link-color: #111111;
@@ -59,16 +54,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   .space {
     @apply(--layout-flex);
-  }
-
-  #drawerToolbar {
-    color: var(--secondary-text-color);
-    background-color: var(--drawer-menu-color);
-    border-bottom: var(--drawer-toolbar-border-color);
-  }
-
-  #drawerToolbar .menu-name {
-    @apply(--paper-font-title);
   }
 
   paper-scroll-header-panel {
@@ -173,10 +158,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   /* Small */
   @media (max-width: 600px) {
 
-    #drawer .paper-toolbar {
-      margin-left: 16px;
-    }
-
     #mainToolbar.tall .app-name {
       font-size: 24px;
       font-weight: 400;
@@ -193,10 +174,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   /* Tablet+ */
   @media (min-width: 601px) {
-
-    #drawer.paper-drawer-panel > [drawer] {
-      border-right: 1px solid rgba(0, 0, 0, 0.14);
-    }
 
     iron-pages {
       padding: 48px 62px;
