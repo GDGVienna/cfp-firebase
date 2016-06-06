@@ -1,28 +1,93 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../styles/app-theme.html">
+<link rel="import" href="../../styles/shared-styles.html">
+
+<script src="../../bower_components/page/page.js"></script>
 
 <dom-module id="cfp-events">
+  <style is="custom-style" include="shared-styles iron-flex iron-flex-alignment">
+    paper-material {
+      @apply(--paper-font-body2);
+    };
+    div.conferences {
+      @apply(--layout-flex);
+      @apply(--layout-wrap);
+      @apply(--layout-horizontal);
+    };
+    div.conferences paper-material {
+      width: 480px;
+    };
+    div.conferences table th {
+      text-align: left;
+      vertical-align: top;
+    };
+    div.conferences table td {
+      text-align: left;
+      vertical-align: top;
+    };
+  </style>
   <template>
-    <style>
-      :host {
-        display: block;
-      }
 
-      span {
-        @apply(--paper-font-body1);
-      }
-    </style>
+    <style include="shared-styles"></style>
+      <firebase-query path="/conference" order-by-child="cfpTo" data="{{events}}">
+    </firebase-query>
 
-    <ul>
-      <template is="dom-repeat" items="{{events}}">
-        <li><span>{{item}}</span></li>
-      </template>
-    </ul>
+    <firebase-state logged="{{logged}}"></firebase-state>
+
+    <h2 hidden$="[[logged]]"><i>To submit a talk proposal: </i></h2>
+    <span hidden$="[[logged]]">
+    <paper-button raised on-tap="_signIn">Sign-In</paper-button> or
+    <paper-button raised on-tap="_signUp">Sign-Up</paper-button>
+    </span>
+    <div class="conferences">
+    <template is="dom-repeat" items="[[events]]" as="conference">
+      <paper-material elevation="1">
+        <img style="max-height:50px; max-width:120px;" id="cfp-evt-img-[[index]]" src="[[_confLogo(conference, index)]]">
+        <a href$="/event/[[conference.$key]]" hidden$="[[_isClosed(conference)]]">
+        <paper-fab style="float:right;" icon="add"></paper-fab>
+        </a>
+        <paper-fab hidden="[[!_isClosed(conference)]]" disabled style="float:right;" icon="add"></paper-fab>
+        <h2>[[conference.name]]</h2>
+        <p><i>[[conference.description]]</i></p>
+        <table border="0">
+          <tr>
+            <th>When:&nbsp;</th>
+            <td>[[_confDates(conference)]]</td>
+          </tr>
+          <tr>
+            <th>Where:&nbsp;</th>
+            <td>[[conference.where]]</td>
+          </tr>
+          <tr>
+            <th>Topics:&nbsp;</th>
+            <td>[[conference.topics]]</td>
+          </tr>
+          <tr>
+            <th>Website:&nbsp;</th>
+            <td><a target="_blank" href="[[conference.url]]">[[conference.url]]</a></td>
+          </tr>
+        </table>
+        <p><i>[[_cfpDateText(conference)]]</i></p>
+      </paper-material>
+    </template>
+    </div>
+    <firebase-profile-page></firebase-profile-page>
   </template>
 
   <script>
     (function() {
       'use strict';
+
+      var monthTxt = [
+            "January", "February", "March",
+            "April", "May", "June", "July",
+            "August", "September", "October",
+            "November", "December"];
 
       Polymer({
         is: 'cfp-events',
@@ -31,14 +96,108 @@
           events: {
             type: Array,
             notify: true
+          },
+          logged: {
+            type: Boolean,
+            notify: true
           }
         },
-
+        _getFirebaseApp: function() {
+          console.log("Looking for firebase!");
+          var appElem = document.getElementById("fireapp");
+          if (appElem) {
+            console.log("Found element");
+            console.log(appElem);
+            console.log(appElem.app);
+            return appElem.app;
+          }
+        },
+        _confLogo: function(conf, index) {
+          console.log(conf);
+          console.log("App..");
+          var app = this._getFirebaseApp();
+          console.log(app);
+          var path = conf.logo;
+          if (path && app) {
+            var st = app.storage();
+            var pRef = st.refFromURL("gs://cfp-manager-40b9c.appspot.com" + path);
+            pRef.getDownloadURL().then(function(url) {
+              document.getElementById("cfp-evt-img-" + index).setAttribute("src", url);
+            return "";
+            });
+          }
+          return "";
+        },
+        _confDates: function(conf) {
+          var from = new Date(conf.dateFrom);
+          var to = new Date(conf.dateTo);
+          var split = false;
+          var txt1 = "";
+          var txt2 = " " + to.getFullYear();
+          if (from.getFullYear() != to.getFullYear()) {
+            txt1 = " " + from.getFullYear();
+            split = true;
+          }
+          txt2 = " " + monthTxt[to.getMonth()] + txt2;
+          if (split || from.getMonth() != to.getMonth()) {
+            txt1 = " " + monthTxt[to.getMonth()] + txt1;
+            split = true;
+          }
+          txt2 = " " + to.getDate() + txt2;
+          if (split || from.getDate() != to.getDate()) {
+            txt1 = " " + from.getDate() + txt1;
+            split = true;
+          }
+          if (split) {
+            return txt1 + " - " + txt2;
+          }
+          else {
+            return txt2;
+          }
+        },
+        _isClosed: function(conf) {
+          return Date.now() >= conf.cfpTo || Date.now() < conf.cfpFrom;
+        },
+        _cfpDateText: function(conf) {
+          var d = conf.cfpTo;
+          var txt;
+          if (Date.now() >= conf.cfpTo) {
+            txt = "Call for Papers closed on ";
+            d = conf.cfpTo;
+          }
+          else if (Date.now() < conf.cfpFrom) {
+            txt = "Call for Papers will open on ";
+            d = conf.cfpFrom;
+          }
+          else {
+            txt = "Call for Papers closes on ";
+            d = conf.cfpTo;
+          }
+          d = new Date(d);
+          txt = txt + d.getDate() + " " + monthTxt[d.getMonth()] + " " + d.getFullYear();
+          return txt;
+        },
         ready: function() {
-          this.events = [
-            'DevFest Vienna',
-            'droidcon Vienna'
-          ];
+          this._firebaseMeta = new Polymer.IronMeta({type: 'firebaseExtended'});
+        },
+        get _firebaseAuthDialog() {
+          return this._firebaseMeta && this._firebaseMeta.byKey('authDialog');
+        },
+        _signIn: function() {
+          if (this._firebaseAuthDialog) {
+            this._firebaseAuthDialog.setAttribute('type', 'SignIn');
+            this._firebaseAuthDialog.open();
+          } else {
+            console.warn('Missing registered firebaseAuthDialog');
+          }
+        },
+        _signUp: function() {
+          if (this._firebaseAuthDialog) {
+            this._firebaseAuthDialog.setAttribute('type', 'SignUp');
+            this._firebaseAuthDialog.open();
+          } else {
+            console.warn('Missing registered firebaseAuthDialog');
+          }
         }
       });
     })();

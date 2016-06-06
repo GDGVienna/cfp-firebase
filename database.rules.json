@@ -1,13 +1,14 @@
 {
   "rules": {
     "admin": {
-      "$uid": {
-        ".validate": "newData.isBoolean()",
-        ".read": "auth != null && root.child('admin').child(auth.uid).val() == true",
-        ".write": "auth != null && newData.parent().parent().child('admin').child(auth.uid).val() == true"
-      }
+      "$key1": {
+        ".validate": "newData.isBoolean()"
+      },
+      ".read": "auth != null && root.child('admin').child(auth.uid).val() == true",
+      ".write": "auth != null && newData.parent().child('admin').child(auth.uid).val() == true"
     },
     "conference": {
+      ".read": "true",
       "$conf": {
         ".validate": "newData.hasChildren(['name', 'description', 'cfpFrom', 'cfpTo'])",
         "name": {
@@ -33,6 +34,10 @@
         ".read": "true",
         ".write": "auth != null && newData.parent().parent().child('admin').child(auth.uid).val() == true"
       }
+    },
+    "profiles": {
+      ".read": "true",
+      ".write": "true"
     },
     "profile": {
       "$uid": {

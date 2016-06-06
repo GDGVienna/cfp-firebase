@@ -62,9 +62,18 @@ type Proposal {
   comment: String,
 }
 
-path /admin/{uid} is Boolean {
+path /admin is Boolean[] {
   write() { isAdmin() }
   read() { isAdmin() }
+}
+
+path /conference {
+  read() { true }
+}
+
+path /profiles {
+  read() { true }
+  write() { true }
 }
 
 path /conference/{conf} is Conference;
