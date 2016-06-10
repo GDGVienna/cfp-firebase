@@ -18,13 +18,14 @@
     <firebase-document data="{{_xProfile}}" path="/profiles/[[userId]]"></firebase-document>
     <h3 hidden$="[[!_isComplete(_fireProfile)]]">Edit Profile</h3>
     <h3 hidden$="[[_isComplete(_fireProfile)]]">Complete Profile</h3>
-    <form is="iron-form" id="container" on-change="_validate">
+    <p hidden$="[[_isComplete(_fireProfile)]]">Please provide the required values (marked with a '*') to complete your profile.</p>
+    <form is="iron-form" id="container">
       <paper-input required label="First Name (*)" value="{{_profile.firstName}}"></paper-input>
       <paper-input required label="Display Name (*)" value="{{_profile.displayName}}"></paper-input>
       <paper-input required label="E-Mail (*)" value="{{_profile.email}}"></paper-input>
       <paper-textarea required rows="2" label="About You - Short Bio (*)" value="{{_profile.bio}}"></paper-textarea>
       <paper-textarea rows="2" label="Any Comment" value="{{_profile.comment}}"></paper-textarea>
-      <paper-button disabled raised id="submitProfile" on-tap="_submit">Save</paper-button>
+      <paper-button raised id="submitProfile" on-tap="_submit">Save</paper-button>
       <paper-button raised on-tap="_cancel">Cancel</paper-button>
     </form>
   </template>
@@ -62,9 +63,9 @@
         },
         _isComplete: function(profile) {
           console.log(profile);
-          var rc = ((profile != undefined) && (profile.firstName != '')
-               && (profile.displayName != '') && (profile.bio != '')
-               && (profile.email != ''));
+          var rc = (!!profile && !!profile.firstName
+               && !!profile.displayName && !!profile.bio != ''
+               && !!profile.email);
           console.log(rc);
           return rc;
         },
@@ -86,10 +87,14 @@
           }
         },
         _submit: function() {
-          // save the profile
-          this.set('_fireProfile', this._profile);
-          this.$.fbProfile.save('/profile', this.userId);
-          this.fire('profile-submit', {changed: true, message: 'Profile saved'});
+          // validate
+          if (this.$.container.validate()) {
+            // save the profile
+            this.set('_fireProfile', this._profile);
+            this.$.fbProfile.save('/profile', this.userId);
+            this._xProfile.cfpProfile = true;
+            this.fire('profile-submit', {changed: true, message: 'Profile saved'});
+          }
         },
         _cancel: function() {
           this.fire('profile-submit', {changed: false, message: 'Profile not saved'});

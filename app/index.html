@@ -86,7 +86,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <template is="dom-bind" id="app">
     <firebase-state user="{{user}}" logged="{{logged}}"></firebase-state>
-    <cfp-profile-check user-id="[[user.uid]]" on-profile-empty="redirectProfile"></cfp-profile-check>
+    <!-- <cfp-profile-check user-id="[[user.uid]]" on-profile-empty="redirectProfile"></cfp-profile-check> -->
 
       <!-- Main Area -->
       <paper-scroll-header-panel main id="headerPanelMain" condenses keep-condensed-header>
@@ -96,7 +96,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <span class="space"></span>
 
           <!-- Application name -->
-          <div class="middle middle-container" on-tap="redirectHome">
+          <div class="middle middle-container" id="app-logo-name" on-tap="redirectHome">
             <img style="max-height:60%;width:auto;" src="/images/touch/icon-72x72.png">
             &nbsp;&nbsp;
             <div class="app-name">Call for Papers</div>
@@ -116,6 +116,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
             <section data-route="conferences">
+              <paper-material elevation="1">
+                <div style="overflow:auto;">
+                  <a style="float:right;" target="_blank" href="http://diversitycharter.org"><img src="/images/supporting-diversity.png"></a>
+                  <p><b>Call for Papers manager by GDG Vienna!</b></p>
+                  <p>
+                    We at <a href="http://www.gdg-vienna.at/" target="_blank">GDG Vienna</a> are involved
+                    in the organization of the following events and conferences.
+                    Here you can maintain one profile for all your talk proposals
+                    to these and future events.
+                  </p>
+                  <div class="clear:both;"></div>
+                </div>
+              </paper-material>
+              <cfp-profile-review user-id="[[user.uid]]">
+                <paper-material>
+                  <p>Please review your <a href="/profile">Profile</a> for details about your person!</p>
+                </paper-material>
+              </cfp-profile-review>
               <cfp-conference-list class="focus-target"></cfp-conference-list>
             </section>
 

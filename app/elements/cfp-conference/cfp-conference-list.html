@@ -31,16 +31,13 @@
       text-align: left;
       vertical-align: top;
     };
-    paper-fab.fab-grey {
-      --paper-fab-background: var(--google-grey-500);
-    };
   </style>
   <template>
 
     <firebase-query path="/conference" order-by-child="cfpTo" data="{{conferences}}">
     </firebase-query>
 
-    <firebase-state logged="{{logged}}"></firebase-state>
+    <firebase-state user="{{user}}" logged="{{logged}}"></firebase-state>
 
     <h2 hidden$="[[logged]]"><i>To submit a talk proposal </i></h2>
     <span hidden$="[[logged]]">
@@ -50,17 +47,7 @@
     <div class="conferences">
     <template is="dom-repeat" items="[[conferences]]" as="conference">
       <paper-material elevation="1">
-        <cfp-conference conference="[[conference]]">
-          <!-- submit proposal -->
-          <a href$="/conference/[[conference.$key]]/proposal" hidden$="[[!_showSubmit(conference, logged)]]">
-          <paper-fab style="float:right;" icon="add" title="Submit proposal"></paper-fab>
-          </a>
-          <paper-fab hidden$="[[!_indicateSubmit(conference, logged)]]" title="Submit proposal" disabled style="float:right;" icon="add"></paper-fab>
-          <!-- list proposals -->
-          <a href$="/conference/[[conference.$key]]/proposals" hidden$="[[!_showSubmit(conference, logged)]]">
-          <paper-fab style="float:right;" icon="list" title="Your proposals" class="fab-grey"></paper-fab>
-          </a>
-        </cfp-conference>
+        <cfp-conference logged="[[logged]]" user-id="[[user.uid]]" conference="[[conference]]"></cfp-conference>
       </paper-material>
     </template>
     </div>
@@ -87,13 +74,11 @@
           logged: {
             type: Boolean,
             notify: true
+          },
+          user: {
+            type: Object,
+            notify: true
           }
-        },
-        _showSubmit: function(conf, logged) {
-          return logged && Date.now() < conf.cfpTo && Date.now() >= conf.cfpFrom;
-        },
-        _indicateSubmit: function(conf, logged) {
-          return logged && (Date.now() >= conf.cfpTo || Date.now() < conf.cfpFrom);
         },
         ready: function() {
           this._firebaseMeta = new Polymer.IronMeta({type: 'firebaseExtended'});

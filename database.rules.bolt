@@ -34,7 +34,7 @@ type Profile {
   firstName: String,
   displayName: String,
   email: Email,
-  comment: String,
+  comment: String | Null
 }
 
 type Conference {
@@ -42,14 +42,14 @@ type Conference {
   description: String,
   cfpFrom: Number,
   cfpTo: Number,
-  dateFrom: Number,
-  dateTo: Number,
-  topics: String,
-  logo: String,
-  url: String,
-  where: String,
-  reviewer: Boolean[],
-  durations: String[],
+  dateFrom: Number | Null,
+  dateTo: Number | Null,
+  topics: String | Null,
+  logo: String | Null,
+  url: String | Null,
+  where: String | Null,
+  reviewer: Boolean[] | Null,
+  durations: String[] | Null,
   write() { isAdmin() }
   read() { true }
 }
@@ -58,8 +58,8 @@ type Proposal {
   speaker: String,
   title: String,
   abstract: String,
-  duration: Number,
-  comment: String,
+  duration: Number | Null,
+  comment: String | Null,
 }
 
 path /admin is Boolean[] {

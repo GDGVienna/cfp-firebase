@@ -11,9 +11,11 @@
 
 <script src="../../bower_components/page/page.js"></script>
 
-<dom-module id="cfp-profile-check">
+<dom-module id="cfp-profile-review">
   <template>
-    <firebase-document data="{{_profile}}" path="/profiles/[[userId]]"></firebase-document>
+    <firebase-document data="{{_profile}}" path="/profile/[[userId]]"></firebase-document>
+    <firebase-document data="{{_xProfile}}" path="/profiles/[[userId]]"></firebase-document>
+    <div hidden$="[[!_requiresUpdate(_profile, _xProfile)]]"><content></content></div>
   </template>
 
   <script>
@@ -21,7 +23,7 @@
       'use strict';
 
       Polymer({
-        is: 'cfp-profile-check',
+        is: 'cfp-profile-review',
 
         properties: {
           userId: {
@@ -32,14 +34,18 @@
           _profile: {
             type: Object,
             notify: true
+          },
+          _xProfile: {
+            type: Object,
+            notify: true
           }
         },
-        observers: [
-          '_checkProfile(userId, _profile)'
-        ],
-        _checkProfile: function(userId, _profile) {
-          if (userId && _profile && _profile.created && !_profile.cfpProfile) {
-            this.fire('profile-empty');
+        _requiresUpdate: function(profile, xProfile) {
+          if (profile && xProfile && xProfile.created) {
+            if (!profile.bio || !profile.email || !profile.firstName || !profile.displayName) {
+              return true;
+            }
+            return false;
           }
         }
       });

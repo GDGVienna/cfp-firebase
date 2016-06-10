@@ -28,10 +28,22 @@
       filter: grayscale(100%);
       -webkit-filter: grayscale(100%);
     };
+    paper-fab.fab-grey {
+      --paper-fab-background: var(--google-grey-500);
+    };
   </style>
   <template>
+    <firebase-query path="/proposal/[[conference.$key]]/[[userId]]" data="{{_proposals}}"></firebase-query>
     <span class$="[[_confCssClass(conference)]]">
-    <content></content>
+      <!-- submit proposal -->
+      <a href$="/conference/[[conference.$key]]/proposal" hidden$="[[!_showSubmit(conference, logged)]]">
+      <paper-fab style="float:right;" icon="add" title="Submit proposal"></paper-fab>
+      </a>
+      <paper-fab hidden$="[[!_indicateSubmit(conference, logged)]]" title="Submit proposal" disabled style="float:right;" icon="add"></paper-fab>
+      <!-- list proposals -->
+      <a href$="/conference/[[conference.$key]]/proposals" hidden$="[[!_showSubmit(conference, logged)]]">
+      <paper-fab hidden$="[[!_proposals.length]]" style="float:right;" icon="list" title="Your proposals" class="fab-grey"></paper-fab>
+      </a>
     <img style="max-height:50px; max-width:120px;" src="[[_confLogo]]">
     <h2>[[conference.name]]</h2>
     <p><i>[[conference.description]]</i></p>
@@ -76,27 +88,40 @@
             notify: true,
             observer: '_confLoaded'
           },
+          userId: {
+            type: String,
+            notify: true,
+            value: 'undefined'
+          },
+          logged: {
+            type: Boolean,
+            notify: true,
+            value: false
+          },
           _confLogo: {
             type: String,
+            notify: true
+          },
+          _proposals: {
+            type: Array,
             notify: true
           }
         },
         _getFirebaseApp: function() {
-          console.log("Looking for firebase!");
           var appElem = document.getElementById("fireapp");
           if (appElem) {
-            console.log("Found element");
-            console.log(appElem);
-            console.log(appElem.app);
             return appElem.app;
           }
         },
+        _showSubmit: function(conf, logged) {
+          return logged && Date.now() < conf.cfpTo && Date.now() >= conf.cfpFrom;
+        },
+        _indicateSubmit: function(conf, logged) {
+          return logged && (Date.now() >= conf.cfpTo || Date.now() < conf.cfpFrom);
+        },
         _confLoaded: function(conf) {
           var that = this;
-          console.log(conf);
-          console.log("App..");
           var app = this._getFirebaseApp();
-          console.log(app);
           var path = conf && conf.logo;
           if (path && app) {
             var st = app.storage();
