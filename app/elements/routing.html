@@ -39,22 +39,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
 
     page('/', function() {
-      app.route = 'events';
+      app.route = 'conferences';
       setFocus(app.route);
     });
 
     page(app.baseUrl, function() {
-      app.route = 'events';
+      app.route = 'conferences';
       setFocus(app.route);
     });
 
-    page('/events', function() {
-      app.route = 'events';
+    page('/conferences', function() {
+      app.route = 'conferences';
       setFocus(app.route);
     });
 
-    page('/event/:id', function(data) {
-      app.route = 'event';
+    page('/profile', function() {
+      app.route = 'profile';
+      setFocus(app.route);
+    });
+
+    page('/conference/:confid/proposals', function(data) {
+      app.route = 'proposals';
+      app.params = data.params;
+      setFocus(app.route);
+    });
+
+    page('/conference/:confid/proposal/:propid?', function(data) {
+      app.route = 'proposal';
       app.params = data.params;
       setFocus(app.route);
     });

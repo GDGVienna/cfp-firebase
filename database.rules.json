@@ -10,7 +10,7 @@
     "conference": {
       ".read": "true",
       "$conf": {
-        ".validate": "newData.hasChildren(['name', 'description', 'cfpFrom', 'cfpTo'])",
+        ".validate": "newData.hasChildren(['name', 'description', 'cfpFrom', 'cfpTo', 'dateFrom', 'dateTo', 'topics', 'logo', 'url', 'where'])",
         "name": {
           ".validate": "newData.isString()"
         },
@@ -23,9 +23,32 @@
         "cfpTo": {
           ".validate": "newData.isNumber()"
         },
+        "dateFrom": {
+          ".validate": "newData.isNumber()"
+        },
+        "dateTo": {
+          ".validate": "newData.isNumber()"
+        },
+        "topics": {
+          ".validate": "newData.isString()"
+        },
+        "logo": {
+          ".validate": "newData.isString()"
+        },
+        "url": {
+          ".validate": "newData.isString()"
+        },
+        "where": {
+          ".validate": "newData.isString()"
+        },
         "reviewer": {
           "$key1": {
             ".validate": "newData.isBoolean()"
+          }
+        },
+        "durations": {
+          "$key2": {
+            ".validate": "newData.isString()"
           }
         },
         "$other": {
@@ -41,50 +64,58 @@
     },
     "profile": {
       "$uid": {
-        ".validate": "newData.hasChildren(['bio', 'name', 'surname', 'email'])",
+        ".validate": "newData.hasChildren(['bio', 'firstName', 'displayName', 'email', 'comment'])",
         "bio": {
           ".validate": "newData.isString()"
         },
-        "name": {
+        "firstName": {
           ".validate": "newData.isString()"
         },
-        "surname": {
+        "displayName": {
           ".validate": "newData.isString()"
         },
         "email": {
           ".validate": "newData.isString() && newData.val().matches(/[\\w+-]+@([\\w-]+\\.)+[\\w-]+/i)"
         },
+        "comment": {
+          ".validate": "newData.isString()"
+        },
         "$other": {
           ".validate": "false"
         },
-        ".write": "data.val() == null && (auth != null && auth.uid == $uid) || data.val() != null && newData.val() != null && (auth != null && newData.parent().parent().child('admin').child(auth.uid).val() == true || auth != null && auth.uid == $uid)",
-        ".read": "auth != null && root.child('admin').child(auth.uid).val() == true || auth != null && auth.uid == $uid"
+        ".read": "auth != null && root.child('admin').child(auth.uid).val() == true || auth != null && auth.uid == $uid",
+        ".write": "auth != null && newData.parent().parent().child('admin').child(auth.uid).val() == true || auth != null && auth.uid == $uid"
       }
     },
     "proposal": {
+      ".read": "auth != null && root.child('admin').child(auth.uid).val() == true",
+      ".write": "auth != null && newData.parent().child('admin').child(auth.uid).val() == true",
       "$conf": {
-        "$id": {
-          ".validate": "newData.hasChildren(['speaker', 'title', 'abstract', 'duration', 'comment'])",
-          "speaker": {
-            ".validate": "newData.isString()"
-          },
-          "title": {
-            ".validate": "newData.isString()"
-          },
-          "abstract": {
-            ".validate": "newData.isString()"
-          },
-          "duration": {
-            ".validate": "newData.isNumber() && (newData.val() == 20 || newData.val() == 45)"
-          },
-          "comment": {
-            ".validate": "newData.isString()"
-          },
-          "$other": {
-            ".validate": "false"
-          },
-          ".write": "data.val() == null && (auth != null && newData.parent().parent().parent().child('admin').child(auth.uid).val() == true || newData.parent().parent().parent().child('conference').child($conf).child('cfpFrom').val() < now && newData.parent().parent().parent().child('conference').child($conf).child('cfpTo').val() > now) || data.val() != null && newData.val() != null && (auth != null && newData.parent().parent().parent().child('admin').child(auth.uid).val() == true || newData.parent().parent().parent().child('conference').child($conf).child('cfpFrom').val() < now && newData.parent().parent().parent().child('conference').child($conf).child('cfpTo').val() > now && (auth != null && auth.uid == newData.child('speaker').val())) || data.val() != null && newData.val() == null && (auth != null && newData.parent().parent().parent().child('admin').child(auth.uid).val() == true || newData.parent().parent().parent().child('conference').child($conf).child('cfpFrom').val() < now && newData.parent().parent().parent().child('conference').child($conf).child('cfpTo').val() > now && (auth != null && auth.uid == newData.child('speaker').val()))",
-          ".read": "auth != null && root.child('admin').child(auth.uid).val() == true || auth != null && root.child('conference').child($conf).child('reviewer').child(auth.uid).val() == true || auth != null && auth.uid == data.child('speaker').val()"
+        ".read": "auth != null && root.child('conference').child($conf).child('reviewer').child(auth.uid).val() == true",
+        "$uid": {
+          ".read": "auth != null && auth.uid == $uid",
+          ".write": "newData.parent().parent().parent().child('conference').child($conf).child('cfpFrom').val() < now && newData.parent().parent().parent().child('conference').child($conf).child('cfpTo').val() > now && (auth != null && auth.uid == $uid)",
+          "$id": {
+            ".validate": "newData.hasChildren(['speaker', 'title', 'abstract', 'duration', 'comment'])",
+            "speaker": {
+              ".validate": "newData.isString()"
+            },
+            "title": {
+              ".validate": "newData.isString()"
+            },
+            "abstract": {
+              ".validate": "newData.isString()"
+            },
+            "duration": {
+              ".validate": "newData.isNumber()"
+            },
+            "comment": {
+              ".validate": "newData.isString()"
+            },
+            "$other": {
+              ".validate": "false"
+            }
+          }
         }
       }
     }

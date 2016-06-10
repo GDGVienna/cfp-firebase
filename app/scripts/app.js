@@ -75,4 +75,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     app.$.headerPanelMain.scrollToTop(true);
   };
 
+  // go to the base URL
+  app.redirectHome = function() {
+    page.redirect(app.baseUrl);
+  };
+
+  // go to the profile page
+  app.redirectProfile = function() {
+    if (page.current != '/profile') {
+      page.redirect('/profile');
+    }
+  }
+
 })(document);

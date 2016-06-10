@@ -1,0 +1,123 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../styles/app-theme.html">
+<link rel="import" href="../../styles/shared-styles.html">
+<link rel="import" href="cfp-conference.html">
+
+<script src="../../bower_components/page/page.js"></script>
+
+<dom-module id="cfp-conference-list">
+  <style is="custom-style" include="shared-styles iron-flex iron-flex-alignment">
+    paper-material {
+      @apply(--paper-font-body2);
+    };
+    div.conferences {
+      @apply(--layout-flex);
+      @apply(--layout-wrap);
+      @apply(--layout-horizontal);
+    };
+    div.conferences paper-material {
+      width: 480px;
+    };
+    div.conferences table th {
+      text-align: left;
+      vertical-align: top;
+    };
+    div.conferences table td {
+      text-align: left;
+      vertical-align: top;
+    };
+    paper-fab.fab-grey {
+      --paper-fab-background: var(--google-grey-500);
+    };
+  </style>
+  <template>
+
+    <firebase-query path="/conference" order-by-child="cfpTo" data="{{conferences}}">
+    </firebase-query>
+
+    <firebase-state logged="{{logged}}"></firebase-state>
+
+    <h2 hidden$="[[logged]]"><i>To submit a talk proposal </i></h2>
+    <span hidden$="[[logged]]">
+    <paper-button raised on-tap="_signIn">Sign-In</paper-button> or
+    <paper-button raised on-tap="_signUp">Sign-Up</paper-button>
+    </span>
+    <div class="conferences">
+    <template is="dom-repeat" items="[[conferences]]" as="conference">
+      <paper-material elevation="1">
+        <cfp-conference conference="[[conference]]">
+          <!-- submit proposal -->
+          <a href$="/conference/[[conference.$key]]/proposal" hidden$="[[!_showSubmit(conference, logged)]]">
+          <paper-fab style="float:right;" icon="add" title="Submit proposal"></paper-fab>
+          </a>
+          <paper-fab hidden$="[[!_indicateSubmit(conference, logged)]]" title="Submit proposal" disabled style="float:right;" icon="add"></paper-fab>
+          <!-- list proposals -->
+          <a href$="/conference/[[conference.$key]]/proposals" hidden$="[[!_showSubmit(conference, logged)]]">
+          <paper-fab style="float:right;" icon="list" title="Your proposals" class="fab-grey"></paper-fab>
+          </a>
+        </cfp-conference>
+      </paper-material>
+    </template>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      var monthTxt = [
+            "January", "February", "March",
+            "April", "May", "June", "July",
+            "August", "September", "October",
+            "November", "December"];
+
+      Polymer({
+        is: 'cfp-conference-list',
+
+        properties: {
+          conferences: {
+            type: Array,
+            notify: true
+          },
+          logged: {
+            type: Boolean,
+            notify: true
+          }
+        },
+        _showSubmit: function(conf, logged) {
+          return logged && Date.now() < conf.cfpTo && Date.now() >= conf.cfpFrom;
+        },
+        _indicateSubmit: function(conf, logged) {
+          return logged && (Date.now() >= conf.cfpTo || Date.now() < conf.cfpFrom);
+        },
+        ready: function() {
+          this._firebaseMeta = new Polymer.IronMeta({type: 'firebaseExtended'});
+        },
+        get _firebaseAuthDialog() {
+          return this._firebaseMeta && this._firebaseMeta.byKey('authDialog');
+        },
+        _signIn: function() {
+          if (this._firebaseAuthDialog) {
+            this._firebaseAuthDialog.setAttribute('type', 'SignIn');
+            this._firebaseAuthDialog.open();
+          } else {
+            console.warn('Missing registered firebaseAuthDialog');
+          }
+        },
+        _signUp: function() {
+          if (this._firebaseAuthDialog) {
+            this._firebaseAuthDialog.setAttribute('type', 'SignUp');
+            this._firebaseAuthDialog.open();
+          } else {
+            console.warn('Missing registered firebaseAuthDialog');
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>

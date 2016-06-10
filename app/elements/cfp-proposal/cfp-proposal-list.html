@@ -1,0 +1,88 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../styles/app-theme.html">
+<link rel="import" href="../../styles/shared-styles.html">
+
+<dom-module id="cfp-proposal-list">
+  <style is="custom-style" include="shared-styles iron-flex iron-flex-alignment">
+    paper-material {
+      @apply(--paper-font-body2);
+    };
+    div.proposals {
+      @apply(--layout-flex);
+      @apply(--layout-wrap);
+      @apply(--layout-horizontal);
+    };
+    div.proposals paper-material {
+      width: 480px;
+      height: 360px;
+      overflow: hidden;
+    };
+    div.proposals table th {
+      text-align: left;
+      vertical-align: top;
+    };
+    div.proposals table td {
+      text-align: left;
+      vertical-align: top;
+    };
+    paper-fab.fab-grey {
+      --paper-fab-background: var(--google-grey-500);
+    };
+  </style>
+  <template>
+    <firebase-query path="/proposal/[[conferenceId]]/[[userId]]" order-by-child="title" data="{{_proposals}}"></firebase-query>
+    <firebase-document path="/conference/[[conferenceId]]" data="{{_conference}}"></firebase-document>
+    <h2>[[_conference.name]]</h2>
+    <p><i>[[_conference.topics]]</i></p>
+    <h3>Your Talk Proposals</h3>
+    <div class="proposals">
+      <template is="dom-repeat" items="[[_proposals]]" as="proposal">
+        <paper-material elevation="1">
+          <h2>[[proposal.title]]</h2>
+          <!-- edit proposal -->
+          <a href$="/conference/[[conferenceId]]/proposal/[[proposal.$key]]">
+          <paper-fab style="float:right;" icon="create" title="Edit proposal"></paper-fab>
+          </a>
+          <p>[[proposal.abstract]]</p>
+        </paper-material>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'cfp-proposal-list',
+
+        properties: {
+          conferenceId: {
+            type: String,
+            notify: true
+          },
+          userId: {
+            type: String,
+            notify: true
+          },
+          _proposals: {
+            type: Array,
+            notify: true
+          },
+          _conference: {
+            type: Object,
+            notify: true
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>

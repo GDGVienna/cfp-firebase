@@ -29,19 +29,12 @@ type Email extends String {
   validate() { this.matches(/[\w+-]+@([\w-]+\.)+[\w-]+/i) }
 }
 
-// Allowed duration values for a conference
-type Duration extends Number {
-  validate() { this == 20 || this == 45 }
-}
-
 type Profile {
   bio: String,
-  name: String,
-  surname: String,
+  firstName: String,
+  displayName: String,
   email: Email,
-  create() { isCurrentUser(key()) }
-  read() { isAdmin() || isCurrentUser(key()) }
-  update() { isAdmin() || isCurrentUser(key()) }
+  comment: String,
 }
 
 type Conference {
@@ -49,7 +42,14 @@ type Conference {
   description: String,
   cfpFrom: Number,
   cfpTo: Number,
+  dateFrom: Number,
+  dateTo: Number,
+  topics: String,
+  logo: String,
+  url: String,
+  where: String,
   reviewer: Boolean[],
+  durations: String[],
   write() { isAdmin() }
   read() { true }
 }
@@ -58,7 +58,7 @@ type Proposal {
   speaker: String,
   title: String,
   abstract: String,
-  duration: Duration,
+  duration: Number,
   comment: String,
 }
 
@@ -78,15 +78,31 @@ path /profiles {
 
 path /conference/{conf} is Conference;
 
-path /profile/{uid} is Profile;
+path /profile/{uid} is Profile {
+  read() { isAdmin() || isCurrentUser(uid) }
+  write() { isAdmin() || isCurrentUser(uid) }
+}
 
-// Allow the admin to always change
+// Admin can read and write all proposals
+// for any conference
+path /proposal {
+  read() { isAdmin() }
+  write() { isAdmin() }
+}
+
+// a reviewer can always read and list the proposals of a conf
+path /proposal/{conf} {
+  read() { isReviewer(conf) }
+}
+
+// a user can always read and list their proposals
+// a user can change, add or delete their proposals as long as open
+path /proposal/{conf}/{uid} {
+  read() { isCurrentUser(uid) }
+  write() { isConfOpen(conf) && isCurrentUser(uid) }
+}
+
 // During opening time everyone can create
 // During opening time only the author can change
 // Only the author or a reviewer can read
-path /proposal/{conf}/{id} is Proposal {
-  create() { isAdmin() || isConfOpen(conf) }
-  update() { isAdmin() || (isConfOpen(conf) && isCurrentUser(this.speaker)) }
-  delete() { isAdmin() || (isConfOpen(conf) && isCurrentUser(this.speaker)) }
-  read() { isAdmin() || isReviewer(conf) || isCurrentUser(this.speaker) }
-}
+path /proposal/{conf}/{uid}/{id} is Proposal;
