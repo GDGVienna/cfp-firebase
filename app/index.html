@@ -137,10 +137,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </section>
 
             <section data-route="proposals">
+              <div class="focus-target">
               <template is="dom-if" restamp if="[[isProposalList(route)]]">
-              <cfp-proposal-list hidden$="[[!logged]]" class="focus-target" conference-id="[[params.confid]]" user-id="[[user.uid]]"></cfp-proposal-list>
+              <cfp-proposal-list hidden$="[[!logged]]" conference-id="[[params.confid]]" user-id="[[user.uid]]"></cfp-proposal-list>
               <h2 hidden$="[[logged]]">You have to be logged in to view your proposals</h2>
               </template>
+              </div>
             </section>
 
             <section data-route="proposal">
