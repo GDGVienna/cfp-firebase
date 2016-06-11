@@ -64,34 +64,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <span id="browser-sync-binding"></span>
   <!-- endbuild -->
 
-  <!-- connect with firebase -->
-  <firebase-app
-    id="fireapp"
-    auth-domain="cfp-manager-40b9c.firebaseapp.com"
-    database-url="https://cfp-manager-40b9c.firebaseio.com"
-    storage-bucket="cfp-manager-40b9c.appspot.com"
-    api-key="AIzaSyDO1O2_1XBxg3MGlCODonVMBoueBIdK1vs">
-  </firebase-app>
-  <firebase-auth-manager></firebase-auth-manager>
-  <firebase-auth-dialog entry-animation="scale-up-animation"
-                        exit-animation="fade-out-animation"
-                        providers='["twitter", "github", "google"]'
-                        modal>
-        <h2 title-sign-up>Sign-Up Dialog</h2>
-        <h2 title-sign-in>Sign-In Dialog</h2>
-        <span introduction>Welcome to the CfP Manager!</span>
-        <span provider>Sign-In with one of the following provider(s):</span>
-        <span user>or provide your email and password:</span>
-  </firebase-auth-dialog>
-
   <template is="dom-bind" id="app">
+    <!-- connect with firebase -->
+    <firebase-app
+      app="{{fireapp}}"
+      auth-domain="cfp-manager-40b9c.firebaseapp.com"
+      database-url="https://cfp-manager-40b9c.firebaseio.com"
+      storage-bucket="cfp-manager-40b9c.appspot.com"
+      api-key="AIzaSyDO1O2_1XBxg3MGlCODonVMBoueBIdK1vs">
+    </firebase-app>
+    <firebase-auth-manager></firebase-auth-manager>
+    <firebase-auth-dialog entry-animation="scale-up-animation"
+                          exit-animation="fade-out-animation"
+                          providers='["twitter", "github", "google"]'
+                          modal>
+          <h2 title-sign-up>Sign-Up Dialog</h2>
+          <h2 title-sign-in>Sign-In Dialog</h2>
+          <span introduction>Welcome to the CfP Manager!</span>
+          <span provider>Sign-In with one of the following provider(s):</span>
+          <span user>or provide your email and password:</span>
+    </firebase-auth-dialog>
     <firebase-state user="{{user}}" logged="{{logged}}"></firebase-state>
     <!-- <cfp-profile-check user-id="[[user.uid]]" on-profile-empty="redirectProfile"></cfp-profile-check> -->
 
       <!-- Main Area -->
-      <paper-scroll-header-panel main id="headerPanelMain" condenses keep-condensed-header>
+      <paper-scroll-header-panel main id="headerPanelMain" fixed>
         <!-- Main Toolbar -->
-        <paper-toolbar id="mainToolbar" class="tall" elevation="2">
+        <paper-toolbar id="mainToolbar" elevation="2">
 
           <span class="space"></span>
 
@@ -103,9 +102,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </div>
 
           <!-- Application sub title -->
-          <div class="bottom bottom-container">
+          <!-- <div class="bottom bottom-container">
             <div class="bottom-title">Conference talk proposals</div>
-          </div>
+          </div> -->
 
           <!-- Login / profile menu -->
           <firebase-account-menu><paper-item on-tap="redirectProfile">Your Profile</paper-item></firebase-account-menu>
@@ -134,18 +133,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   <p>Please review your <a href="/profile">Profile</a> for details about your person!</p>
                 </paper-material>
               </cfp-profile-review>
-              <cfp-conference-list class="focus-target"></cfp-conference-list>
+              <cfp-conference-list fire-app="[[fireapp]]" class="focus-target"></cfp-conference-list>
             </section>
 
             <section data-route="proposals">
+              <template is="dom-if" restamp if="[[isProposalList(route)]]">
               <cfp-proposal-list hidden$="[[!logged]]" class="focus-target" conference-id="[[params.confid]]" user-id="[[user.uid]]"></cfp-proposal-list>
               <h2 hidden$="[[logged]]">You have to be logged in to view your proposals</h2>
+              </template>
             </section>
 
             <section data-route="proposal">
               <paper-material class="focus-target" elevation="1">
-                <cfp-proposal hidden$="[[!logged]]" conference-id="[[params.confid]]" proposal-id="[[params.propid]]" on-proposal-submit="redirectHome" user-id="[[user.uid]]"></cfp-proposal>
-                <h2 hidden$="[[logged]]">You have to be logged in to submit or edit a proposal</h2>
+                <cfp-proposal-submit fire-app="[[fireapp]]" hidden$="[[!logged]]" conference-id="[[params.confid]]" on-proposal-submit="redirectHome" user-id="[[user.uid]]"></cfp-proposal>
+                <h2 hidden$="[[logged]]">You have to be logged in to submit a proposal</h2>
               </paper-material>
             </section>
 

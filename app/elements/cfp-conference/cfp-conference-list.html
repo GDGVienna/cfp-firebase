@@ -47,7 +47,7 @@
     <div class="conferences">
     <template is="dom-repeat" items="[[conferences]]" as="conference">
       <paper-material elevation="1">
-        <cfp-conference logged="[[logged]]" user-id="[[user.uid]]" conference="[[conference]]"></cfp-conference>
+        <cfp-conference fire-app="[[fireApp]]" logged="[[logged]]" user-id="[[user.uid]]" conference="[[conference]]"></cfp-conference>
       </paper-material>
     </template>
     </div>
@@ -78,6 +78,11 @@
           user: {
             type: Object,
             notify: true
+          },
+          fireApp: {
+            type: Object,
+            notify: true,
+            value: {}
           }
         },
         ready: function() {

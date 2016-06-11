@@ -53,9 +53,9 @@
         <paper-material elevation="1">
           <h2>[[proposal.title]]</h2>
           <!-- edit proposal -->
-          <a href$="/conference/[[conferenceId]]/proposal/[[proposal.$key]]">
+          <!-- <a href$="/conference/[[conferenceId]]/proposal/[[proposal.$key]]">
           <paper-fab style="float:right;" icon="create" title="Edit proposal"></paper-fab>
-          </a>
+          </a> -->
           <p>[[proposal.abstract]]</p>
         </paper-material>
       </template>
@@ -72,15 +72,18 @@
         properties: {
           conferenceId: {
             type: String,
-            notify: true
+            notify: true,
+            value: 'undefined'
           },
           userId: {
             type: String,
-            notify: true
+            notify: true,
+            value: 'undefined'
           },
           _proposals: {
             type: Array,
-            notify: true
+            notify: true,
+            value: []
           },
           _conference: {
             type: Object,

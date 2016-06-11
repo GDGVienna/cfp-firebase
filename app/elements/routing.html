@@ -64,7 +64,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       setFocus(app.route);
     });
 
-    page('/conference/:confid/proposal/:propid?', function(data) {
+    page('/conference/:confid/proposal', function(data) {
       app.route = 'proposal';
       app.params = data.params;
       setFocus(app.route);
