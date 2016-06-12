@@ -47,6 +47,7 @@ type Conference {
   topics: String | Null,
   logo: String | Null,
   url: String | Null,
+  instructionsUrl: String | Null,
   where: String | Null,
   reviewer: Boolean[] | Null,
   durations: String[] | Null,

@@ -38,6 +38,9 @@
         "url": {
           ".validate": "newData.isString() || newData.val() == null"
         },
+        "instructionsUrl": {
+          ".validate": "newData.isString() || newData.val() == null"
+        },
         "where": {
           ".validate": "newData.isString() || newData.val() == null"
         },
