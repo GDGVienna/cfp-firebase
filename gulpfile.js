@@ -28,8 +28,7 @@ var historyApiFallback = require('connect-history-api-fallback');
 var packageJson = require('./package.json');
 var crypto = require('crypto');
 var ensureFiles = require('./tasks/ensure-files.js');
-
-// var ghPages = require('gulp-gh-pages');
+var exec = require('child_process').exec;
 
 var AUTOPREFIXER_BROWSERS = [
   'ie >= 10',
@@ -43,10 +42,34 @@ var AUTOPREFIXER_BROWSERS = [
   'bb >= 10'
 ];
 
-var DIST = 'dist';
+var ENV = 'production';
+var DIST = {
+  'production': 'dist',
+  'staging': 'dist-staging'
+};
+var LOCALS = {
+  'production': {
+    'firebase': {
+      'apiKey': 'AIzaSyDO1O2_1XBxg3MGlCODonVMBoueBIdK1vs',
+      'dbUrl': 'https://cfp-manager-40b9c.firebaseio.com',
+      'authDomain': 'cfp-manager-40b9c.firebaseapp.com',
+      'storageBucket': 'cfp-manager-40b9c.appspot.com'
+    },
+    'appName': 'Call for Papers'
+  },
+  'staging': {
+    'firebase': {
+      'apiKey': 'AIzaSyCXA5tRp9aXBQ6SytfOSBnDi2s0A8h59io',
+      'dbUrl': 'https://cfp-manager-dev.firebaseio.com',
+      'authDomain': 'cfp-manager-dev.firebaseapp.com',
+      'storageBucket': 'cfp-manager-dev.appspot.com'
+    },
+    'appName': 'Call for Papers - Staging Environment'
+  }
+};
 
 var dist = function(subpath) {
-  return !subpath ? DIST : path.join(DIST, subpath);
+  return !subpath ? DIST[ENV] : path.join(DIST[ENV], subpath);
 };
 
 var styleTask = function(stylesPath, srcs) {
@@ -129,6 +152,13 @@ gulp.task('fonts', function() {
 // Scan your HTML for assets & optimize them
 gulp.task('build', ['images', 'fonts'], function() {
   return gulp.src(['app/**/*.html', '!app/{elements,test,bower_components}/**/*.html'])
+    .pipe($.nunjucksHtml({
+      locals: LOCALS[ENV],
+      tags: {
+        variableStart: '{<$',
+        variableEnd: '$>}'
+      }
+    }))
     .pipe($.useref())
     .pipe($.if('*.js', $.uglify({
       preserveComments: 'some'
@@ -149,6 +179,13 @@ gulp.task('vulcanize', function() {
       stripComments: true,
       inlineCss: true,
       inlineScripts: true
+    }))
+    .pipe($.nunjucksHtml({
+      locals: LOCALS[ENV],
+      tags: {
+        variableStart: '{<$',
+        variableEnd: '$>}'
+      }
     }))
     .pipe(gulp.dest(dist('elements')))
     .pipe($.size({title: 'vulcanize'}));
@@ -257,24 +294,56 @@ gulp.task('default', ['clean'], function(cb) {
     cb);
 });
 
-// Build then deploy to GitHub pages gh-pages branch
-gulp.task('build-deploy-gh-pages', function(cb) {
+// Build then deploy to Firebase production environment
+gulp.task('build-deploy-production', function(cb) {
+  // switch to production
+  ENV = 'production';
   runSequence(
     'default',
-    'deploy-gh-pages',
+    'bolt',
+    'deploy-production',
     cb);
 });
 
-// Deploy to GitHub pages gh-pages branch
-gulp.task('deploy-gh-pages', function() {
-  return gulp.src(dist('**/*'))
-    // Check if running task from Travis CI, if so run using GH_TOKEN
-    // otherwise run using ghPages defaults.
-    .pipe($.if(process.env.TRAVIS === 'true', $.ghPages({
-      remoteUrl: 'https://$GH_TOKEN@github.com/PolymerElements/polymer-starter-kit.git',
-      silent: true,
-      branch: 'gh-pages'
-    }), $.ghPages()));
+// Build then deploy to Firebase staging environment
+gulp.task('build-deploy-staging', function(cb) {
+  // switch to staging
+  ENV = 'staging';
+  runSequence(
+    'default',
+    'bolt',
+    'deploy-staging',
+    cb);
+});
+
+// Run Firebase Bolt compiler
+gulp.task('bolt', function(cb) {
+  exec('firebase-bolt < database.rules.bolt > database.rules.json',
+       function(err, stdout, stderr) {
+         console.log(stdout);
+         console.log(stderr);
+         cb(err);
+       });
+});
+  
+// Deploy to Firebase production environment
+gulp.task('deploy-production', function(cb) {
+  exec('firebase -P production deploy -p dist',
+       function(err, stdout, stderr) {
+         console.log(stdout);
+         console.log(stderr);
+         cb(err);
+       });
+});
+
+// Deploy to Firebase staging environment
+gulp.task('deploy-staging', function(cb) {
+  exec('firebase -P staging deploy -p dist-staging',
+       function(err, stdout, stderr) {
+         console.log(stdout);
+         console.log(stderr);
+         cb(err);
+       });
 });
 
 // Load tasks for web-component-tester

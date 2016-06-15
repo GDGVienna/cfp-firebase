@@ -87,6 +87,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
   }
 
+  // are we on the proposal list page?
   app.isProposalList = function(route) {
     return route == "proposals";
   }

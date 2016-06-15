@@ -16,7 +16,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="generator" content="Polymer Starter Kit">
-  <title>Call for Papers</title>
+  <title>{<$ appName $>}</title>
 
   <!-- Place favicon.ico in the `app/` directory -->
 
@@ -66,13 +66,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <template is="dom-bind" id="app">
     <!-- connect with firebase -->
-    <firebase-app
-      app="{{fireapp}}"
-      auth-domain="cfp-manager-40b9c.firebaseapp.com"
-      database-url="https://cfp-manager-40b9c.firebaseio.com"
-      storage-bucket="cfp-manager-40b9c.appspot.com"
-      api-key="AIzaSyDO1O2_1XBxg3MGlCODonVMBoueBIdK1vs">
-    </firebase-app>
+    <firebase-app app="{{fireapp}}" auth-domain="{<$ firebase.authDomain $>}" database-url="{<$ firebase.dbUrl $>}" api-key="{<$ firebase.apiKey $>}"></firebase-app>
     <firebase-auth-manager></firebase-auth-manager>
     <firebase-auth-dialog entry-animation="scale-up-animation"
                           exit-animation="fade-out-animation"
@@ -98,7 +92,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <div class="middle middle-container" id="app-logo-name" on-tap="redirectHome">
             <img style="max-height:60%;width:auto;" src="/images/touch/icon-72x72.png">
             &nbsp;&nbsp;
-            <div class="app-name">Call for Papers</div>
+            <div class="app-name">{<$ appName $>}</div>
           </div>
 
           <!-- Application sub title -->

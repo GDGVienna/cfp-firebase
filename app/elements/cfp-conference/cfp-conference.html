@@ -128,7 +128,7 @@
           var path = conf && conf.logo;
           if (path && app) {
             var st = app.storage();
-            var pRef = st.refFromURL("gs://cfp-manager-40b9c.appspot.com" + path);
+            var pRef = st.refFromURL("gs://{<$ firebase.storageBucket $>}" + path);
             pRef.getDownloadURL().then(function(url) {
               that.set('_confLogo', url);
             });

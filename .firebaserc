@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "cfp-manager-40b9c"
+    "production": "cfp-manager-40b9c",
+    "staging": "cfp-manager-dev"
   }
 }
