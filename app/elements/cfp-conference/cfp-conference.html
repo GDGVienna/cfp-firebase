@@ -37,12 +37,12 @@
     <firebase-query path="/proposal/[[conference.$key]]/[[userId]]" data="{{_proposals}}"></firebase-query>
     <span class$="[[_confCssClass(conference)]]">
       <!-- submit proposal -->
-      <a href$="/conference/[[conference.$key]]/proposal" hidden$="[[!_showSubmit(conference, logged)]]">
+      <a href$="/conference/[[conference.$key]]/proposal" hidden$="[[!_showSubmit(conference, allowEdit)]]">
       <paper-fab style="float:right;" icon="add" title="Submit proposal"></paper-fab>
       </a>
-      <paper-fab hidden$="[[!_indicateSubmit(conference, logged)]]" title="Submit proposal" disabled style="float:right;" icon="add"></paper-fab>
+      <paper-fab hidden$="[[!_indicateSubmit(conference, allowEdit)]]" title="Submit proposal" disabled style="float:right;" icon="add"></paper-fab>
       <!-- list proposals -->
-      <a href$="/conference/[[conference.$key]]/proposals" hidden$="[[!_showSubmit(conference, logged)]]">
+      <a href$="/conference/[[conference.$key]]/proposals" hidden$="[[!_showSubmit(conference, allowEdit)]]">
         <div hidden$="[[!_proposals.length]]" style="float:right;">
           <!-- <paper-badge label="[[_proposals.length]]"></paper-badge> -->
           <paper-fab icon="list" title="Your proposals" class="fab-grey"></paper-fab>
@@ -97,7 +97,7 @@
             notify: true,
             value: 'undefined'
           },
-          logged: {
+          allowEdit: {
             type: Boolean,
             notify: true,
             value: false
@@ -116,11 +116,11 @@
             notify: true
           }
         },
-        _showSubmit: function(conf, logged) {
-          return logged && Date.now() < conf.cfpTo && Date.now() >= conf.cfpFrom;
+        _showSubmit: function(conf, allowEdit) {
+          return allowEdit && Date.now() < conf.cfpTo && Date.now() >= conf.cfpFrom;
         },
-        _indicateSubmit: function(conf, logged) {
-          return logged && (Date.now() >= conf.cfpTo || Date.now() < conf.cfpFrom);
+        _indicateSubmit: function(conf, allowEdit) {
+          return allowEdit && (Date.now() >= conf.cfpTo || Date.now() < conf.cfpFrom);
         },
         _confLoaded: function(conf) {
           var that = this;

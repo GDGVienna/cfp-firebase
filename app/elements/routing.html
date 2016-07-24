@@ -27,10 +27,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       next();
     }
 
-    function setFocus(selected){
-      Polymer.dom(document)
-        .querySelector('section[data-route="' + selected + '"] .focus-target')
-        .focus();
+    function setFocus(selected) {
+      var elements = Polymer.dom(document)
+        .querySelector('[data-route="' + selected + '"] .focus-target');
+      if (elements) {
+        elements.focus();
+      }
     }
 
     // Routes

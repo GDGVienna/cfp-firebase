@@ -67,19 +67,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template is="dom-bind" id="app">
     <!-- connect with firebase -->
     <firebase-app app="{{fireapp}}" auth-domain="{<$ firebase.authDomain $>}" database-url="{<$ firebase.dbUrl $>}" api-key="{<$ firebase.apiKey $>}"></firebase-app>
-    <firebase-auth-manager></firebase-auth-manager>
-    <firebase-auth-dialog entry-animation="scale-up-animation"
-                          exit-animation="fade-out-animation"
-                          providers='["twitter", "github", "google"]'
-                          modal>
-          <h2 title-sign-up>Sign-Up Dialog</h2>
-          <h2 title-sign-in>Sign-In Dialog</h2>
-          <span introduction>Welcome to the CfP Manager!</span>
-          <span provider>Sign-In with one of the following provider(s):</span>
-          <span user>or provide your email and password:</span>
-    </firebase-auth-dialog>
-    <firebase-state user="{{user}}" logged="{{logged}}"></firebase-state>
-    <!-- <cfp-profile-check user-id="[[user.uid]]" on-profile-empty="redirectProfile"></cfp-profile-check> -->
+    <!-- use firebase authentication -->
+    <firebase-auth id="auth" user="{{user}}" signed-in="{{logged}}"></firebase-auth>
+    <cfp-auth-dialog id="authDialog"></cfp-auth-dialog>
+    <cfp-profile-check user-id="[[user.uid]]" requires-update="{{profileRequiresUpdate}}" is-completed="{{isProfileCompleted}}"></cfp-profile-check>
 
       <!-- Main Area -->
       <paper-scroll-header-panel main id="headerPanelMain" fixed>
@@ -101,57 +92,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </div> -->
 
           <!-- Login / profile menu -->
-          <firebase-account-menu><paper-item on-tap="redirectProfile">Your Profile</paper-item></firebase-account-menu>
+          <cfp-profile-menu is-logged-in="[[logged]]" user="[[user]]" on-login="openLoginDialog" on-logout="logout" on-profile-edit="redirectProfile"></cfp-profile-menu>
 
+          <!-- Messages... -->
+          <paper-toast id="appToast" text=""></paper-toast> 
         </paper-toolbar>
 
         <!-- Main Content -->
         <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
-            <section data-route="conferences">
-              <paper-material elevation="1">
-                <div style="overflow:auto;">
-                  <a style="float:right;" target="_blank" href="http://diversitycharter.org"><img src="/images/supporting-diversity.png"></a>
-                  <p><b>Call for Papers manager by GDG Vienna!</b></p>
-                  <p>
-                    We at <a href="http://www.gdg-vienna.at/" target="_blank">GDG Vienna</a> are involved
-                    in the organization of the following events and conferences.
-                    Here you can maintain one profile for all your talk proposals
-                    to these and future events.
-                  </p>
-                  <div class="clear:both;"></div>
-                </div>
-              </paper-material>
-              <cfp-profile-review user-id="[[user.uid]]">
-                <paper-material>
-                  <p>Please review your <a href="/profile">Profile</a> for details about your person!</p>
-                </paper-material>
-              </cfp-profile-review>
-              <cfp-conference-list fire-app="[[fireapp]]" class="focus-target"></cfp-conference-list>
-            </section>
+            <cfp-page-default user="[[user]]" profile-update-required="[[profileRequiresUpdate]]" is-logged-in="[[logged]]" fireapp="[[fireapp]]" data-route="conferences"></cfp-page-default>
 
-            <section data-route="proposals">
-              <div class="focus-target">
-              <template is="dom-if" restamp if="[[isProposalList(route)]]">
-              <cfp-proposal-list hidden$="[[!logged]]" conference-id="[[params.confid]]" user-id="[[user.uid]]"></cfp-proposal-list>
-              <h2 hidden$="[[logged]]">You have to be logged in to view your proposals</h2>
-              </template>
-              </div>
-            </section>
+            <cfp-page-proposals user="[[user]]" is-active="[[isProposalList(route)]]" is-logged-in="[[logged]]" conference-id="[[params.confid]]" data-route="proposals"></cfp-page-proposals>
 
-            <section data-route="proposal">
-              <paper-material class="focus-target" elevation="1">
-                <cfp-proposal-submit fire-app="[[fireapp]]" hidden$="[[!logged]]" conference-id="[[params.confid]]" on-proposal-submit="redirectHome" user-id="[[user.uid]]"></cfp-proposal>
-                <h2 hidden$="[[logged]]">You have to be logged in to submit a proposal</h2>
-              </paper-material>
-            </section>
+            <cfp-page-proposal-form user="[[user]]" is-logged-in="[[logged]]" fireapp="[[fireapp]]" conference-id="[[params.confid]]" on-proposal-submit="redirectHome" data-route="proposal"></cfp-page-proposal-form>
 
-            <section data-route="profile">
-              <paper-material class="focus-target" elevation="1">
-                <cfp-profile hidden$="[[!logged]]" user-id="[[user.uid]]" on-profile-submit="redirectHome"></cfp-profile>
-                <h2 hidden$="[[logged]]">You have to be logged in to edit your profile</h2>
-              </paper-material>
-            </section>
+            <cfp-page-profile user="[[user]]" is-logged-in="[[logged]]" on-profile-submit="redirectHome" data-route="profile"></cfp-page-profile>
 
           </iron-pages>
         </div>

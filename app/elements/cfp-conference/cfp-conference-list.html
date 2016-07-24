@@ -37,17 +37,10 @@
     <firebase-query path="/conference" order-by-child="cfpTo" data="{{conferences}}">
     </firebase-query>
 
-    <firebase-state user="{{user}}" logged="{{logged}}"></firebase-state>
-
-    <h2 hidden$="[[logged]]"><i>To submit a talk proposal </i></h2>
-    <span hidden$="[[logged]]">
-    <paper-button raised on-tap="_signIn">Sign-In</paper-button> or
-    <paper-button raised on-tap="_signUp">Sign-Up</paper-button>
-    </span>
     <div class="conferences">
     <template is="dom-repeat" items="[[conferences]]" as="conference">
       <paper-material elevation="1">
-        <cfp-conference fire-app="[[fireApp]]" logged="[[logged]]" user-id="[[user.uid]]" conference="[[conference]]"></cfp-conference>
+        <cfp-conference fire-app="[[fireApp]]" allow-edit="[[allowEdit]]" user-id="[[user.uid]]" conference="[[conference]]"></cfp-conference>
       </paper-material>
     </template>
     </div>
@@ -71,7 +64,7 @@
             type: Array,
             notify: true
           },
-          logged: {
+          allowEdit: {
             type: Boolean,
             notify: true
           },
@@ -83,28 +76,6 @@
             type: Object,
             notify: true,
             value: {}
-          }
-        },
-        ready: function() {
-          this._firebaseMeta = new Polymer.IronMeta({type: 'firebaseExtended'});
-        },
-        get _firebaseAuthDialog() {
-          return this._firebaseMeta && this._firebaseMeta.byKey('authDialog');
-        },
-        _signIn: function() {
-          if (this._firebaseAuthDialog) {
-            this._firebaseAuthDialog.setAttribute('type', 'SignIn');
-            this._firebaseAuthDialog.open();
-          } else {
-            console.warn('Missing registered firebaseAuthDialog');
-          }
-        },
-        _signUp: function() {
-          if (this._firebaseAuthDialog) {
-            this._firebaseAuthDialog.setAttribute('type', 'SignUp');
-            this._firebaseAuthDialog.open();
-          } else {
-            console.warn('Missing registered firebaseAuthDialog');
           }
         }
       });

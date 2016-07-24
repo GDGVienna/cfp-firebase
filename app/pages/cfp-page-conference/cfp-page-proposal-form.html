@@ -1,0 +1,44 @@
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../elements/cfp-proposal/cfp-proposal-submit.html">
+<link rel="import" href="../../styles/app-theme.html">
+<link rel="import" href="../../styles/shared-styles.html">
+
+<dom-module id="cfp-page-proposal-form">
+  <style is="custom-style" include="shared-styles"></style>
+  <template>
+    <section>
+      <paper-material class="focus-target" elevation="1">
+        <cfp-proposal-submit fire-app="[[fireapp]]" hidden$="[[!isLoggedIn]]" conference-id="[[conferenceId]]" user-id="[[user.uid]]"></cfp-proposal-submit>
+        <h2 hidden$="[[isLoggedIn]]">You have to be logged in to submit a proposal</h2>
+      </paper-material>
+    </section>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'cfp-page-proposal-form',
+        properties: {
+          user: {
+            type: Object,
+            notify: true
+          },
+          isLoggedIn: {
+            type: Boolean,
+            notify: true
+          },
+          conferenceId: {
+            type: String,
+            notify: Boolean
+          },
+          fireapp: {
+            type: Object,
+            notify: true
+          }
+        },
+      });
+    })();
+  </script>
+</dom-module>
+ 

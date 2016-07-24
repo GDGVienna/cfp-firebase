@@ -1,0 +1,148 @@
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-shared-styles.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+
+
+<dom-module id="cfp-auth-dialog">
+  <style is="custom-style" include="paper-dialog-shared-styles">
+    .github {
+      color: black;
+      background-color: #eee;
+    }
+    .google {
+      color: white;
+      --iron-icon-fill-color: white;
+      background-color: #d34836;
+    }
+    .twitter {
+      color: white;
+      --iron-icon-fill-color: white;
+      background-color: #00aced;
+    }
+  </style>
+  <template>
+    <paper-tabs selected="{{formType}}">
+      <paper-tab>Login</paper-tab>
+      <paper-tab>Sign-Up</paper-tab>
+    </paper-tabs>
+
+      <div>
+        <h2>Call for Papers</h2>
+        <p hidden$="[[isSignup]]">Login with one of the following providers:</p>
+        <p hidden$="[[isLogin]]">Sign-Up with one of the following providers:</p>
+        <template is="dom-repeat" items='["twitter","github","google"]' as="provider">
+          <paper-button raised
+                    class$="[[provider]]"
+                    provider$="[[provider]]"
+                    on-tap="_handleProvider">
+            <iron-icon class$="[[provider]]" icon="firebase:[[provider]]"></iron-icon>
+            [[provider]]
+          </paper-button>
+        </template>
+        <p hidden$="[[isSignup]]">or provide your email and password:</p>
+        <p hidden$="[[isLogin]]">or provide your email and choose a password:</p>
+        <gold-email-input id="email" value="{{email}}" auto-validate></gold-email-input>
+        <paper-input type="password" label="Password" value="{{password}}" id="password"></paper-input>
+        <paper-input type="password" error-message="The two password fiels do not match" invalid="[[!passwordMatch]]" label="Repeat Password" value="{{password2}}" id="password2" hidden$="[[isLogin]]"></paper-input>
+        <br>
+        <div hidden$="[[isLogin]]">
+          <paper-button disabled="[[!passwordMatch]]" raised>Sign-Up</paper-button>
+          <paper-button raised dialog-dismiss>Cancel</paper-button>
+        </div>
+        <div hidden$="[[isSignup]]">
+          <paper-button raised on-tap="_handleLogin">Login</paper-button>
+          <paper-button raised on-tap="_handleReset" disabled="[[!passwordEmpty]]">Reset Password</paper-button>
+          <paper-button raised dialog-dismiss>Cancel</paper-button>
+        </div>
+      </div>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'cfp-auth-dialog',
+
+        behaviors: [
+          Polymer.PaperDialogBehavior
+        ],
+        observers: [
+          "_openedOrClosed(opened)"
+        ],
+        properties: {
+          formType: {
+            type: Number,
+            value: 0
+          },
+          isLogin: {
+            type: Boolean,
+            computed: "_isLogin(formType)"
+          },
+          isSignup: {
+            type: Boolean,
+            computed: "_isSignup(formType)"
+          },
+          email: {
+            type: String,
+            notify: true
+          },
+          password: {
+            type: String,
+            notify: true
+          },
+          password2: {
+            type: String,
+            notify: true
+          },
+          passwordMatch: {
+            type: Boolean,
+            notify: true,
+            computed: "_isEqual(password, password2)"
+          },
+          passwordEmpty: {
+            type: Boolean,
+            notify: true,
+            computed: "_isEmpty(password)"
+          }
+        },
+        _isSignup: function(formType) {
+          return !!formType;
+        },
+        _isLogin: function(formType) {
+          return !formType;
+        },
+        _isEqual: function(s1, s2) {
+          return s1 == s2;
+        },
+        _isEmpty: function(s) {
+          return s == "";
+        },
+        _openedOrClosed: function(o) {
+          this.formType = 0;
+          this.email = "";
+          this.password = "";
+          this.password2 = "";
+        },
+        _handleProvider: function(e) {
+         if (e && e.target && e.target.getAttribute('provider')) {
+            this.fire('login-provider',
+              { provider: e.target.getAttribute('provider') });
+            this.close();
+          }
+        },
+        _handleLogin: function(e) {
+          this.fire('login-password',
+            { email: this.$.email.value,
+              password: this.$.password.value });
+          this.close();
+        },
+        _handleReset: function(e) {
+          this.fire('reset-password',
+            { email: this.$.email.value });
+          this.close();
+        }
+      });
+    })();
+  </script>
+</dom-module>

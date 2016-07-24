@@ -92,4 +92,70 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     return route == "proposals";
   }
 
+  // display a toast message
+  app.message = function(txt) {
+    app.$.appToast.set("text", txt);
+    app.$.appToast.open();
+  }
+
+  // open cfp auth dialog
+  app.openLoginDialog = function() {
+    app.$.authDialog.open();
+  }
+
+  // perform a log-out
+  app.logout = function() {
+    app.$.auth.signOut()
+    .then(function(e) {
+      console.log(e);
+      app.message("Logout worked!");
+    })
+    .catch(function(e) {
+      console.log(e);
+      app.message("Logout failed!");
+    });
+  }
+  // act on login via provider
+  window.addEventListener('login-provider', function(e) {
+    app.$.auth.provider = e.detail.provider;
+    app.$.auth.signInWithPopup()
+    .then(function(e) {
+      console.log(e);
+      app.message("Login with provider worked!");
+    })
+    .catch(function(e) {
+      console.log(e);
+      app.$.auth.signInWithRedirect();
+    });
+  });
+
+  // act on login with password
+  window.addEventListener('login-password', function(e) {
+    console.log(e);
+    app.$.auth.signInWithEmailAndPassword(
+      e.detail.email,
+      e.detail.password
+    )
+    .then(function(e) {
+      app.message("Login with password worked");
+    })
+    .catch(function(e) {
+      app.message("Login with password failed");
+    });
+  });
+
+  // act on password reset
+  window.addEventListener('reset-password', function(e) {
+    console.log(e);
+  });
+
+  // act on signup with password
+  window.addEventListener('signup-password', function(e) {
+    console.log(e);
+    app.$.auth.createUserWithEmailAndPassword(
+      e.detail.email,
+      e.detail.password
+    );
+  });
+
 })(document);

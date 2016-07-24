@@ -1,0 +1,47 @@
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+
+<dom-module id="cfp-router">
+  <template>
+  	<app-location route="{{route}}"></app-location>
+  	<app-route route="{{route}}" pattern="/" active="{{defaultPage}}"></app-route>
+  	<app-route route="{{route}}" pattern="/:page" data="{{data}}" tail="{{subroute}}"></app-route>
+  	<app-route route="{{subroute}}" pattern="/:confid/:function" data="{{subData}}"></app-route>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'cfp-router',
+
+        properties: {
+          route: {
+            type: Object,
+            notify: true
+          },
+          defaultPage: {
+          	type: Boolean,
+          	notify: true
+          },
+          data: {
+          	type: Object,
+          	notify: true
+          },
+          subData: {
+          	type: Object,
+          	notify: true
+          }
+        },
+        observers: [
+          '_routeChanged(route.*)'
+        ],
+        _routeChanged: function(changeRecord) {
+        	if (changeRecord.path == "path") {
+        		console.log("Path changed!");
+        	}
+        }
+      });
+    })();
+  </script>
+</dom-module>

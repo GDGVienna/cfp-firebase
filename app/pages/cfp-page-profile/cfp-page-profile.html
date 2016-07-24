@@ -1,0 +1,34 @@
+<link rel="import" href="../../elements/cfp-profile/cfp-profile.html">
+<link rel="import" href="../../styles/app-theme.html">
+<link rel="import" href="../../styles/shared-styles.html">
+
+<dom-module id="cfp-page-profile">
+  <style is="custom-style" include="shared-styles"></style>
+  <template>
+    <section data-route="profile">
+      <paper-material class="focus-target" elevation="1">
+      <cfp-profile hidden$="[[!isLoggedIn]]" user-id="[[user.uid]]"></cfp-profile>
+        <h2 hidden$="[[isLoggedIn]]">You have to be logged in to edit your profile</h2>
+      </paper-material>
+    </section>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'cfp-page-profile',
+        properties: {
+          isLoggedIn: {
+            type: Boolean,
+            notify: true
+          },
+          user: {
+            type: Object,
+            notify: true
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>

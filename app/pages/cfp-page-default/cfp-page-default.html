@@ -1,0 +1,79 @@
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../elements/cfp-profile/cfp-profile-review.html">
+<link rel="import" href="../../elements/cfp-conference/cfp-conference-list.html">
+<link rel="import" href="../../styles/app-theme.html">
+<link rel="import" href="../../styles/shared-styles.html">
+
+<dom-module id="cfp-page-default">
+  <style is="custom-style" include="shared-styles">
+  </style>
+  <template>
+    <section>
+      <paper-material elevation="1">
+        <div style="overflow:auto;">
+          <a style="float:right;" target="_blank" href="http://diversitycharter.org"><img src="/images/supporting-diversity.png"></a>
+          <p><b>Call for Papers manager by GDG Vienna!</b></p>
+          <p>
+            We at <a href="http://www.gdg-vienna.at/" target="_blank">GDG Vienna</a> are involved
+            in the organization of the following events and conferences.
+            Here you can maintain one profile for all your talk proposals
+            to these and future events.
+          </p>
+          <div class="clear:both;"></div>
+        </div>
+      </paper-material>
+      <paper-material hidden$="[[!shouldEditProfile]]">
+          <p>Please review your <a href="/profile">Profile</a> for details about your person!</p>
+      </paper-material>
+      <paper-material hidden$="[[isLoggedIn]]">
+          <p>Please login before submitting a proposal!</p>
+      </paper-material>
+      <cfp-conference-list user="[[user]]" allow-edit="[[allowEdit]]" fire-app="[[fireapp]]" class="focus-target"></cfp-conference-list>
+    </section>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'cfp-page-default',
+        properties: {
+          user: {
+            type: Object,
+            notify: true
+          },
+          profileUpdateRequired: {
+            type: Boolean,
+            notify: true
+          },
+          fireapp: {
+            type: Object,
+            notify: true
+          },
+          isLoggedIn: {
+            type: Boolean,
+            notify: true
+          },
+          allowEdit: {
+            type: Boolean,
+            notify: true,
+            computed: "_isEditAllowed(isLoggedIn, profileUpdateRequired)"
+          },
+          shouldEditProfile: {
+            type: Boolean,
+            notify: true,
+            computed: "_shouldEditProfile(isLoggedIn, profileUpdateRequired)"
+          }
+        },
+        _isEditAllowed: function(isLoggedIn, profileEmpty) {
+          return isLoggedIn && !profileEmpty;
+        },
+        _shouldEditProfile: function(isLoggedIn, profileEmpty) {
+          return isLoggedIn && profileEmpty;
+        }
+      });
+    })();
+  </script>
+</dom-module>
+ 

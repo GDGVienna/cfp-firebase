@@ -1,0 +1,45 @@
+<link rel="import" href="../../elements/cfp-proposal/cfp-proposal-list.html">
+<link rel="import" href="../../styles/app-theme.html">
+<link rel="import" href="../../styles/shared-styles.html">
+
+<dom-module id="cfp-page-proposals">
+  <style is="custom-style" include="shared-styles"></style>
+  <template>
+    <section>
+      <div class="focus-target">
+        <template is="dom-if" restamp if="[[isActive]]">
+          <cfp-proposal-list hidden$="[[!isLoggedIn]]" conference-id="[[conferenceId]]" user-id="[[user.uid]]"></cfp-proposal-list>
+          <h2 hidden$="[[isLoggedIn]]">You have to be logged in to view your proposals</h2>
+        </template>
+      </div>
+    </section>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'cfp-page-proposals',
+        properties: {
+          isLoggedIn: {
+            type: Boolean,
+            notify: true
+          },
+          user: {
+            type: Object,
+            notify: true
+          },
+          conferenceId: {
+            type: String,
+            notify: true
+          },
+          isActive: {
+            type: Boolean,
+            notify: true
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>
+ 

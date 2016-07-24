@@ -13,7 +13,8 @@
 
 <dom-module id="cfp-profile-check">
   <template>
-    <firebase-document data="{{_profile}}" path="/profiles/[[userId]]"></firebase-document>
+    <firebase-document data="{{_profile}}" path="/profile/[[userId]]"></firebase-document>
+    <firebase-document data="{{_xProfile}}" path="/profiles/[[userId]]"></firebase-document>
   </template>
 
   <script>
@@ -32,15 +33,33 @@
           _profile: {
             type: Object,
             notify: true
+          },
+          _xProfile: {
+            type: Object,
+            notify: true
+          },
+          requiresUpdate: {
+            type: Boolean,
+            notify: true,
+            computed: "_requiresUpdate(_profile, _xProfile)"
+          },
+          isCompleted: {
+            type: Boolean,
+            notify: true,
+            computed: "_isCompleted(userId, _profile, _xProfile)"
           }
         },
-        observers: [
-          '_checkProfile(userId, _profile)'
-        ],
-        _checkProfile: function(userId, _profile) {
-          if (userId && _profile && _profile.created && !_profile.cfpProfile) {
-            this.fire('profile-empty');
+        _requiresUpdate: function(profile, xProfile) {
+          if (profile && xProfile) {
+            if (!profile.bio || !profile.email || !profile.firstName || !profile.displayName) {
+              return true;
+            }
+            return false;
           }
+          return true;
+        },
+        _isCompleted: function(userId, profile, xProfile) {
+          return userId && profile && xProfile && !this._requiresUpdate(profile, xProfile);
         }
       });
     })();

@@ -1,0 +1,67 @@
+
+<link rel="import" href="../../styles/app-theme.html">
+<link rel="import" href="../../styles/shared-styles.html">
+
+<dom-module id="cfp-profile-menu">
+  <style is="custom-style" include="shared-styles">
+    iron-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      margin-right: 10px;
+    }
+  </style>
+  <template>
+    <iron-media-query query="(max-width: 720px)" query-matches="{{_isMobile}}"></iron-media-query>
+    <paper-menu-button hidden$="[[!isLoggedIn]]" horizontal-align="right">
+      <paper-button class="dropdown-trigger">
+        <iron-image src="[[user.photoURL]]" sizing="cover"></iron-image>
+        <span hidden$="[[_isMobile]]">[[user.displayName]]</span>
+        <iron-icon icon="expand-more"></iron-icon>
+      </paper-button>
+      <paper-menu class="dropdown-content">
+        <paper-item on-tap="_handleProfile">Profile</paper-item>
+        <paper-item on-tap="_handleLogout">Logout</paper-item>
+      </paper-menu>
+    </paper-menu-button>
+
+    <div id="signedOut" hidden$="[[isLoggedIn]]">
+      <paper-button on-tap="_handleLogin">Login</paper-button>
+    </div>
+
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'cfp-profile-menu',
+
+        properties: {
+          isLoggedIn: {
+            type: Boolean,
+            notify: true,
+          },
+          user: {
+            type: Object,
+            notify: true
+          },
+          _isMobile: {
+            type: Boolean,
+            notify: true
+          }
+        },
+        _handleLogin: function() {
+          this.fire("login");
+        },
+        _handleLogout: function() {
+          this.fire("logout");
+        },
+        _handleProfile: function() {
+          this.fire("profile-edit");
+        }
+      });
+    })();
+  </script>
+</dom-module>
