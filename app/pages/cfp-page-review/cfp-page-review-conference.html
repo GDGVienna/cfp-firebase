@@ -1,24 +1,49 @@
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
 <dom-module id="cfp-page-review-conference">
-  <style is="custom-style" include="shared-styles">
+  <style is="custom-style" include="shared-styles iron-flex iron-flex-alignment">
+    paper-material {
+      @apply(--paper-font-body2);
+    };
+    div.proposals {
+      @apply(--layout-flex);
+      @apply(--layout-wrap);
+      @apply(--layout-horizontal);
+    };
+    div.proposals paper-material {
+      width: 480px;
+      height: 360px;
+      overflow: hidden;
+    };
+    div.proposals table th {
+      text-align: left;
+      vertical-align: top;
+    };
+    div.proposals table td {
+      text-align: left;
+      vertical-align: top;
+    };
+    paper-fab.fab-grey {
+      --paper-fab-background: var(--google-grey-500);
+    };
   </style>
   <template>
-    <firebase-document id="confReviewPropFb" path="/proposal/[[conferenceId]]" data="{{_proposalDoc}}"></firebase-document>
     <firebase-document path="/review/[[conferenceId]]/[[userId]]" data="{{_reviewDoc}}"></firebase-document>
+    <firebase-document id="confReviewPropFb" path="/proposal/[[conferenceId]]" data="{{_proposalDoc}}"></firebase-document>
     <p hidden$="[[_hasAccess]]">You don't have access</p>
     <div hidden$="[[_hasAccess]]">
       <paper-input label="Access Key for Reviews" value="{{_accessKey}}"></paper-input>
       <br>
       <paper-button raised on-tap="_writeKey">Submit</paper-button>
     </div>
-    <p hidden$="[[!_hasAccess]]">You do have access!</p>
-    <div hidden$="[[!_hasAccess]]">
-      <template is="dom-repeat" items="[[_proposalsMerged]]" as="proposal">
+    <paper-toggle-button hidden$="[[!_hasAccess]]" active="{{_filterNewOnly}}">New Items only</paper-toggle-button>
+    <div hidden$="[[!_hasAccess]]" class="proposals">
+      <template id="reviews" is="dom-repeat" items="[[_proposalsMerged]]" as="proposal" filter="[[_computeFilter(_filterNewOnly)]]">
         <paper-material elevation="1">
           <h2>[[proposal.title]]</h2>
-          <!-- edit proposal -->
-          <!-- <a href$="/conference/[[conferenceId]]/proposal/[[proposal.$key]]">
-          <paper-fab style="float:right;" icon="create" title="Edit proposal"></paper-fab>
-          </a> -->
+          <!-- show rating -->
+          <paper-fab style="float:right;" class$="[[_ratingClass(proposal)]]" icon="[[_ratingIcon(proposal)]]" title="Rate"></paper-fab>
+          <p>[[proposal.review.comment]]</p>
           <p>[[proposal.abstract]]</p>
         </paper-material>
       </template>
@@ -41,7 +66,8 @@
             value: {}
           },
           userId: {
-            type: String
+            type: String,
+            notify: true
           },
           _proposalDoc: {
             type: Object,
@@ -53,18 +79,26 @@
           },
           _hasAccess: {
             type: Boolean,
-            computed: "_isNotNull(_proposals)"
+            computed: "_isNotNull(_proposals)",
+            notify: true
           },
           _proposals: {
             type: Array,
-            computed: "_flattenTwoDim(_proposalDoc)"
+            computed: "_flattenTwoDim(_proposalDoc)",
+            notify: true
           },
           _proposalsMerged: {
             type: Array,
-            computed: "_mergePropsReviews(_proposals, _reviewDoc)"
+            computed: "_mergePropsReviews(_proposals, _reviewDoc)",
+            notify: true
           },
           _accessKey: {
-            type: String
+            type: String,
+            notify: true
+          },
+          _filterNewOnly: {
+            type: Boolean,
+            notify: true
           }
         },
         _isNotNull: function(x) {
@@ -106,9 +140,13 @@
           for (i=0; i<l; i++) {
             key = proposals[i].id;
             if (key in reviews) {
-              proposals[i].review = reviews[key];
+              proposals[i].review = {
+                rating: reviews[key].rating,
+                comment: reviews[key].comment
+              };
             }
           }
+          console.log(JSON.stringify(proposals));
           return proposals;
         },
         _writeKey: function() {
@@ -121,6 +159,43 @@
           .then(function() {
             fbDoc.set("path", "/proposal/" + confId);
           });
+        },
+        _ratingIcon: function(p) {
+          console.log(JSON.stringify(p));
+          if (!p.review) {
+            console.log("no review");
+            return "create";
+          }
+          console.log("has review!");
+          switch (p.review.rating) {
+            case -1:
+            return "image:exposure-neg-1";
+            case -2:
+            return "image:exposure-neg-2";
+            case 1:
+            return "image:exposure-plus-1";
+            case 2:
+            return "image:exposure-plus-2";
+            case 0:
+            default:
+            return "image:exposure-zero"
+          }
+        },
+        _ratingClass: function(p) {
+          if (!p.review) {
+            return "fab-normal";
+          }
+          return "fab-grey";
+        },
+        _computeFilter: function(flag) {
+          if (flag) {
+            return function(p) {
+              return !p.review;
+            }
+          }
+          else {
+            return null;
+          }
         }
       });
     })();

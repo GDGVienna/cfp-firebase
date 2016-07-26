@@ -147,6 +147,6 @@ path /proposal/{conf}/{uid}/{id} is Proposal;
 
 // a reviewer can see and update their reviews
 path /review/{conf}/{uid} {
-  read() { isAdmin() || isReviewer(conf) }
-  write() { isAdmin() || isReviewer(conf) }
+  read() { isAdmin() || (isReviewer(conf) && isCurrentUser(uid)) }
+  write() { isAdmin() || (isReviewer(conf) && isCurrentUser(uid)) }
 }
