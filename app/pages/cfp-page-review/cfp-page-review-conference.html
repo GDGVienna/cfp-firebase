@@ -1,0 +1,129 @@
+<dom-module id="cfp-page-review-conference">
+  <style is="custom-style" include="shared-styles">
+  </style>
+  <template>
+    <firebase-document id="confReviewPropFb" path="/proposal/[[conferenceId]]" data="{{_proposalDoc}}"></firebase-document>
+    <firebase-document path="/review/[[conferenceId]]/[[userId]]" data="{{_reviewDoc}}"></firebase-document>
+    <p hidden$="[[_hasAccess]]">You don't have access</p>
+    <div hidden$="[[_hasAccess]]">
+      <paper-input label="Access Key for Reviews" value="{{_accessKey}}"></paper-input>
+      <br>
+      <paper-button raised on-tap="_writeKey">Submit</paper-button>
+    </div>
+    <p hidden$="[[!_hasAccess]]">You do have access!</p>
+    <div hidden$="[[!_hasAccess]]">
+      <template is="dom-repeat" items="[[_proposalsMerged]]" as="proposal">
+        <paper-material elevation="1">
+          <h2>[[proposal.title]]</h2>
+          <!-- edit proposal -->
+          <!-- <a href$="/conference/[[conferenceId]]/proposal/[[proposal.$key]]">
+          <paper-fab style="float:right;" icon="create" title="Edit proposal"></paper-fab>
+          </a> -->
+          <p>[[proposal.abstract]]</p>
+        </paper-material>
+      </template>
+    </div>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'cfp-page-review-conference',
+        properties: {
+          conferenceId: {
+            type: String,
+            notify: true
+          },
+          fireApp: {
+            type: Object,
+            notify: true,
+            value: {}
+          },
+          userId: {
+            type: String
+          },
+          _proposalDoc: {
+            type: Object,
+            notify: true
+          },
+          _reviewDoc: {
+            type: Object,
+            notify: true
+          },
+          _hasAccess: {
+            type: Boolean,
+            computed: "_isNotNull(_proposals)"
+          },
+          _proposals: {
+            type: Array,
+            computed: "_flattenTwoDim(_proposalDoc)"
+          },
+          _proposalsMerged: {
+            type: Array,
+            computed: "_mergePropsReviews(_proposals, _reviewDoc)"
+          },
+          _accessKey: {
+            type: String
+          }
+        },
+        _isNotNull: function(x) {
+          return x && x.length > 0;
+        },
+        _flattenTwoDim: function(all) {
+          console.log("flatten...");
+          console.log(all);
+          var flat = [];
+          var i = 0;
+          var a, b;
+          for (a in all) {
+            if (all[a] instanceof Object) {
+              for (b in all[a]) {
+                if (all[a][b] instanceof Object) {
+                  flat[i] = {
+                    title: all[a][b].title,
+                    abstract: all[a][b].abstract,
+                    duration: all[a][b].duration,
+                    comment: all[a][b].comment,
+                    id: b
+                  };
+                  i++;
+                }
+              }
+            }
+          }
+          flat.sort(function(x,y) {
+            return x.title < y.title ? -1
+               : (x.title == y.title ? 0: 1);
+          })
+          console.log(flat);
+          return flat;
+        },
+        _mergePropsReviews: function(proposals, reviews) {
+          var i = 0;
+          var l = proposals.length;
+          var key;
+          for (i=0; i<l; i++) {
+            key = proposals[i].id;
+            if (key in reviews) {
+              proposals[i].review = reviews[key];
+            }
+          }
+          return proposals;
+        },
+        _writeKey: function() {
+          var fbDoc = this.$.confReviewPropFb;
+          var confId = this.conferenceId;
+          fbDoc.set("path", "/proposal/undefined");
+          this.fireApp.database()
+          .ref('/profile/' + this.userId + '/secret/' + confId)
+          .set(this._accessKey)
+          .then(function() {
+            fbDoc.set("path", "/proposal/" + confId);
+          });
+        }
+      });
+    })();
+  </script>
+</dom-module>
+ 

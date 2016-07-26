@@ -109,6 +109,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             <cfp-page-profile user="[[user]]" is-logged-in="[[logged]]" on-profile-submit="redirectHome" data-route="profile"></cfp-page-profile>
 
+            <cfp-page-review-conference fire-app="[[fireapp]]" conference-id="[[params.confid]]" user-id="[[user.uid]]" is-logged-in="[[logged]]" data-route="review"></cfp-page-review-conference>
+
           </iron-pages>
         </div>
       </paper-scroll-header-panel>

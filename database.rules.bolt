@@ -13,10 +13,42 @@ isCurrentUser(uid) {
 confById(confid) {
   root["conference"][confid]
 }
-  
+
+// get secrets for conference id
+// hardcoded path: /secret/$confid
+confSecret(confid) {
+  root["secret"][confid]
+}
+
+
+// has the user a secret for conference
+// hardcoded path: /profile/$userid/secret/$confid
+userHasSecret(confid) {
+  auth != null &&
+    root["profile"][auth.uid] != null &&
+    root["profile"][auth.uid].secret != null &&
+    root["profile"][auth.uid].secret[confid] != null
+}
+
+// get the user a secret for conference
+// hardcoded path: /profile/$userid/secret/$confid
+userSecret(confid) {
+  root["profile"][auth.uid].secret[confid]
+}
+
+// Check if current user has a role in a conference
+// hardcoded path: /secret/$confid/$role/$usersecret
+hasRole(confid, role) {
+  auth != null &&
+    userHasSecret(confid) &&
+    confSecret(confid) != null &&
+    confSecret(confid)[role] != null &&
+    confSecret(confid)[role][userSecret(confid)] != null
+}
+
 // Check if current user is a reviewer
 isReviewer(confid) {
-  auth != null && confById(confid).reviewer[auth.uid]
+  hasRole(confid, "reviewer")
 }
 
 // Check for a currently open conference
@@ -34,7 +66,8 @@ type Profile {
   firstName: String,
   displayName: String,
   email: Email,
-  comment: String | Null
+  comment: String | Null,
+  secret: String[]
 }
 
 type Conference {
@@ -49,8 +82,7 @@ type Conference {
   url: String | Null,
   instructionsUrl: String | Null,
   where: String | Null,
-  reviewer: Boolean[] | Null,
-  durations: String[] | Null,
+  durations: String[],
   write() { isAdmin() }
   read() { true }
 }
@@ -70,6 +102,11 @@ path /admin is Boolean[] {
 
 path /conference {
   read() { true }
+}
+
+path /secret {
+  write() { isAdmin() }
+  read() { isAdmin() }
 }
 
 path /profiles {
@@ -107,3 +144,9 @@ path /proposal/{conf}/{uid} {
 // During opening time only the author can change
 // Only the author or a reviewer can read
 path /proposal/{conf}/{uid}/{id} is Proposal;
+
+// a reviewer can see and update their reviews
+path /review/{conf}/{uid} {
+  read() { isAdmin() || isReviewer(conf) }
+  write() { isAdmin() || isReviewer(conf) }
+}

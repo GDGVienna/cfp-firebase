@@ -44,17 +44,10 @@
         "where": {
           ".validate": "newData.isString() || newData.val() == null"
         },
-        "reviewer": {
-          "$key1": {
-            ".validate": "newData.isBoolean()"
-          },
-          ".validate": "newData.val() == null"
-        },
         "durations": {
           "$key2": {
             ".validate": "newData.isString()"
-          },
-          ".validate": "newData.val() == null"
+          }
         },
         "$other": {
           ".validate": "false"
@@ -62,6 +55,10 @@
         ".read": "true",
         ".write": "auth != null && newData.parent().parent().child('admin').child(auth.uid).val() == true"
       }
+    },
+    "secret": {
+      ".read": "auth != null && root.child('admin').child(auth.uid).val() == true",
+      ".write": "auth != null && newData.parent().child('admin').child(auth.uid).val() == true"
     },
     "profiles": {
       ".read": "true",
@@ -85,6 +82,11 @@
         "comment": {
           ".validate": "newData.isString() || newData.val() == null"
         },
+        "secret": {
+          "$key2": {
+            ".validate": "newData.isString()"
+          }
+        },
         "$other": {
           ".validate": "false"
         },
@@ -96,7 +98,7 @@
       ".read": "auth != null && root.child('admin').child(auth.uid).val() == true",
       ".write": "auth != null && newData.parent().child('admin').child(auth.uid).val() == true",
       "$conf": {
-        ".read": "auth != null && root.child('conference').child($conf).child('reviewer').child(auth.uid).val() == true",
+        ".read": "auth != null && (auth != null && root.child('profile').child(auth.uid).val() != null && root.child('profile').child(auth.uid).child('secret').val() != null && root.child('profile').child(auth.uid).child('secret').child($conf).val() != null) && root.child('secret').child($conf).val() != null && root.child('secret').child($conf).child('reviewer').val() != null && root.child('secret').child($conf).child('reviewer').child(root.child('profile').child(auth.uid).child('secret').child($conf).val()).val() != null",
         "$uid": {
           ".read": "auth != null && auth.uid == $uid",
           ".write": "newData.parent().parent().parent().child('conference').child($conf).child('cfpFrom').val() < now && newData.parent().parent().parent().child('conference').child($conf).child('cfpTo').val() > now && (auth != null && auth.uid == $uid)",
@@ -121,6 +123,14 @@
               ".validate": "false"
             }
           }
+        }
+      }
+    },
+    "review": {
+      "$conf": {
+        "$uid": {
+          ".read": "auth != null && root.child('admin').child(auth.uid).val() == true || auth != null && (auth != null && root.child('profile').child(auth.uid).val() != null && root.child('profile').child(auth.uid).child('secret').val() != null && root.child('profile').child(auth.uid).child('secret').child($conf).val() != null) && root.child('secret').child($conf).val() != null && root.child('secret').child($conf).child('reviewer').val() != null && root.child('secret').child($conf).child('reviewer').child(root.child('profile').child(auth.uid).child('secret').child($conf).val()).val() != null",
+          ".write": "auth != null && newData.parent().parent().parent().child('admin').child(auth.uid).val() == true || auth != null && (auth != null && newData.parent().parent().parent().child('profile').child(auth.uid).val() != null && newData.parent().parent().parent().child('profile').child(auth.uid).child('secret').val() != null && newData.parent().parent().parent().child('profile').child(auth.uid).child('secret').child($conf).val() != null) && newData.parent().parent().parent().child('secret').child($conf).val() != null && newData.parent().parent().parent().child('secret').child($conf).child('reviewer').val() != null && newData.parent().parent().parent().child('secret').child($conf).child('reviewer').child(newData.parent().parent().parent().child('profile').child(auth.uid).child('secret').child($conf).val()).val() != null"
         }
       }
     }
