@@ -8,6 +8,9 @@
       padding-left: 20px;
       padding-right: 20px;
     }
+    div.proposal-comment {
+      font-style: italic;
+    }
     paper-fab.icon-unselected {
       --paper-fab-background: var(--google-grey-500);
     };
@@ -15,6 +18,7 @@
   <template>
     <firebase-document path="/review/[[conferenceId]]/[[userId]]/[[speakerId]]/[[proposalId]]" data="{{_reviewDoc}}"></firebase-document>
     <firebase-document path="/proposal/[[conferenceId]]/[[speakerId]]/[[proposalId]]" data="{{_proposalDoc}}"></firebase-document>
+    <firebase-document path="/conference/[[conferenceId]]" data="{{_conferenceDoc}}"></firebase-document>
     <h2>[[_proposalDoc.title]]</h2>
     <paper-dialog-scrollable class="review-abstract">
       <div>[[_proposalDoc.abstract]]</div>
@@ -74,6 +78,10 @@
             type: Object,
             notify: true,
           },
+          _conferenceDoc: {
+            type: Object,
+            notify: true
+          },
           _rating: {
             type: Number,
             notify: true,
@@ -82,8 +90,15 @@
           _comment: {
             type: String,
             notify: true
+          },
+          _duration: {
+            type: String,
+            notify: true
           }
         },
+        observers: [
+          "_showDuration(_proposalDoc, _conferenceDoc)"
+        ],
         _saveRating: function(e) {
           var f = Polymer.dom(e);
           if (f && f.localTarget && f.localTarget.dataset) {
@@ -118,6 +133,9 @@
           var path = '/review/' + this.conferenceId +
                '/' + this.userId + '/' + speakerId +
                '/' + proposalId;
+          var rating = 99;
+          var comment = "";
+          var val;
           this.set('speakerId', speakerId);
           this.set('proposalId', proposalId);
           this.fireApp.database()
@@ -125,8 +143,17 @@
             .once("value", function(data) {
               console.log("Firebase data...");
               console.log(data.val());
-              that.set('_rating', data.val().rating);
-              that.set('_comment', data.val().comment);
+              val = data.val();
+              if (val) {
+                if ('rating' in val) {
+                  rating = val.rating;
+                }
+                if ('comment' in val) {
+                  comment = val.comment;
+                }
+              }
+              that.set('_rating', rating);
+              that.set('_comment', comment);
               that.open();
             }, function(err) {
               console.log("Error in FB");
@@ -135,6 +162,30 @@
         },
         _equals: function(x, y) {
           return x == y;
+        },
+        _durationText: function(durIdx) {
+          var confDurations;
+          if (this._conferenceDoc && 'durations' in this._conferenceDoc) {
+            confDurations = this._conferenceDoc.durations;
+            if (durIdx >= 0 && durIdx < confDurations.length) {
+              console.log(confDurations[durIdx]);
+              return confDurations[durIdx];
+            }
+          }
+          return "unknown";
+        },
+        _showDuration: function(propDoc, confDoc) {
+          console.log("Duration...");
+          console.log(JSON.stringify(propDoc));
+          console.log(JSON.stringify(confDoc));
+          if (confDoc && propDoc && 'durations' in confDoc && 'duration' in propDoc) {
+            var durIdx = propDoc.duration;
+            var durations = confDoc.durations;
+            if (durIdx >= 0 && durIdx < durations.length) {
+              this.set('_duration', durations[durIdx]);
+              console.log("Updated to " + durations[durIdx]);
+            }
+          }
         }
       });
     })();

@@ -62,10 +62,10 @@ type Email extends String {
 }
 
 type Profile {
-  bio: String,
-  firstName: String,
-  displayName: String,
-  email: Email,
+  bio: String | Null,
+  firstName: String | Null,
+  displayName: String | Null,
+  email: Email | Null,
   comment: String | Null,
   secret: String[]
 }

@@ -66,18 +66,18 @@
     },
     "profile": {
       "$uid": {
-        ".validate": "newData.hasChildren(['bio', 'firstName', 'displayName', 'email'])",
+        ".validate": "newData.hasChildren()",
         "bio": {
-          ".validate": "newData.isString()"
+          ".validate": "newData.isString() || newData.val() == null"
         },
         "firstName": {
-          ".validate": "newData.isString()"
+          ".validate": "newData.isString() || newData.val() == null"
         },
         "displayName": {
-          ".validate": "newData.isString()"
+          ".validate": "newData.isString() || newData.val() == null"
         },
         "email": {
-          ".validate": "newData.isString() && newData.val().matches(/[\\w+-]+@([\\w-]+\\.)+[\\w-]+/i)"
+          ".validate": "newData.isString() && newData.val().matches(/[\\w+-]+@([\\w-]+\\.)+[\\w-]+/i) || newData.val() == null"
         },
         "comment": {
           ".validate": "newData.isString() || newData.val() == null"

@@ -30,7 +30,7 @@
   <template>
     <firebase-document path="/review/[[conferenceId]]/[[userId]]" data="{{_reviewDoc}}"></firebase-document>
     <firebase-document id="confReviewPropFb" path="/proposal/[[conferenceId]]" data="{{_proposalDoc}}"></firebase-document>
-    <cfp-review id="reviewForm" conference-id="[[conferenceId]]" fire-app="[[fireApp]]" user-id="[[userId]]" on-reviewed="_forceReload"></cfp-review>
+    <cfp-review with-backdrop id="reviewForm" conference-id="[[conferenceId]]" fire-app="[[fireApp]]" user-id="[[userId]]" on-reviewed="_forceReload"></cfp-review>
     <template is="dom-if" if="[[isLoggedIn]]" restamp>
       <p hidden$="[[_hasAccess]]">You don't have access</p>
       <div hidden$="[[_hasAccess]]">
@@ -107,7 +107,8 @@
           },
           _filterNewOnly: {
             type: Boolean,
-            notify: true
+            notify: true,
+            observer: "_forceReload"
           },
           _restampFlag: {
             type: Boolean,
