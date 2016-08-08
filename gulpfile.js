@@ -284,6 +284,31 @@ gulp.task('serve:dist', ['default'], function() {
   });
 });
 
+// Build and serve the output from the staging build
+gulp.task('serve:staging', ['default'], function() {
+  // switch to staging
+  ENV = 'staging';
+  browserSync({
+    port: 5001,
+    notify: false,
+    logPrefix: 'PSK',
+    snippetOptions: {
+      rule: {
+        match: '<span id="browser-sync-binding"></span>',
+        fn: function(snippet) {
+          return snippet;
+        }
+      }
+    },
+    // Run as an https by uncommenting 'https: true'
+    // Note: this uses an unsigned certificate which on first access
+    //       will present a certificate warning in the browser.
+    // https: true,
+    server: dist(),
+    middleware: [historyApiFallback()]
+  });
+});
+
 // Build production files, the default task
 gulp.task('default', ['clean'], function(cb) {
   // Uncomment 'cache-config' if you are going to use service workers.
