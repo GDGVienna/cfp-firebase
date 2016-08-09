@@ -111,6 +111,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             <cfp-page-review-conference fire-app="[[fireapp]]" conference-id="[[params.confid]]" user-id="[[user.uid]]" is-logged-in="[[logged]]" data-route="review"></cfp-page-review-conference>
 
+            <cfp-page-speaker fire-app="[[fireapp]]" is-logged-in="[[logged]]" data-route="speakers"></cfp-page-speaker>
+
+            <cfp-page-report fire-app="[[fireapp]]" conference-id="[[params.confid]]" is-logged-in="[[logged]]" data-route="report"></cfp-page-report>
+
           </iron-pages>
         </div>
       </paper-scroll-header-panel>

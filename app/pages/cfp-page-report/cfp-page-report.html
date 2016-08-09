@@ -1,0 +1,249 @@
+<dom-module id="cfp-page-report">
+  <template>
+    <template is="dom-if" if="[[isLoggedIn]]" restamp>
+      <p hidden$="[[_hasAccess]]">You don't have access to produce reports.</p>
+      <div hidden$="[[!_hasAccess]]" class="proposals">
+        <h1>Report: [[_conference]]</h1>
+        <template id="proposal-list" is="dom-repeat" items="{{_proposals}}" as="proposal">
+          <h2>[[proposal.title]]</h2>
+          <h4>Rating: [[proposal.rating]]</h4>
+          <p style="font-style: italic;">Duration: [[propsal.duration]]</p>
+          <p>[[proposal.abstract]]</p>
+          <p style="font-style: italic;">Comment: [[proposal.talkComment]]</p>
+          <pre>[[proposal.talkReview]]</pre>
+          <h3>Speaker: [[proposal.displayName]]</h3>
+          <p style="font-style: italic;">[[proposal.email]]</p>
+          <p>[[proposal.bio]]</p>
+          <p style="font-style: italic;">Speaker Comment: [[proposal.speakerComment]]</p>
+          <p>Speaker Rating: [[proposal.speakerRating]]</p>
+          <p>[[proposal.speakerReview]]</p>
+          <hr>
+        </template>
+      </div>
+    </template>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'cfp-page-report',
+        properties: {
+          isLoggedIn: {
+            type: Boolean,
+            notify: true
+          },
+          conferenceId: {
+            type: String,
+            notify: true
+          },
+          fireApp: {
+            type: Object,
+            notify: true
+          },
+          _conference: {
+            type: String,
+            notify: true
+          },
+          _conferenceDoc: {
+            type: Object,
+            notify: true
+          },
+          _reviewDoc: {
+            type: Object,
+            notify: true
+          },
+          _speakerReviewDoc: {
+            type: Object,
+            notify: true
+          },
+          _profileDoc: {
+            type: Object,
+            notify: true
+          },
+          _profilesDoc: {
+            type: Object,
+            notify: true
+          },
+          _proposalDoc: {
+            type: Object,
+            notify: true
+          },
+          _proposals: {
+            type: Array,
+            notify: true,
+            value: []
+          },
+          _hasAccess: {
+            type: Boolean,
+            computed: "_isNotNull(_proposals)",
+            notify: true
+          }
+        },
+        observers: [
+          // "_mergeProposals(_conferenceDoc, _reviewDoc, _speakerReviewDoc, _profileDoc, _profilesDoc, _proposalDoc, conferenceId)"
+          // "_mergeProposals(_allDoc, conferenceId)"
+          "_loadProposals(conferenceId, fireApp, isLoggedIn)"
+        ],
+        _isNotNull: function(x) {
+          return x && x.length > 0;
+        },
+        _loadProposals: function (conferenceId, fireApp, isLoggedIn) {
+          if (!conferenceId || !fireApp || !isLoggedIn) {
+            return;
+          }
+          var that = this;
+          that.fireApp.database().ref("/profile").once("value")
+          .then(function(v) {
+            if (v && v.val()) {
+              that.set('_profileDoc', v.val());
+            }
+            return that.fireApp.database().ref("/profiles").once("value");
+          })
+          .then(function(v) {
+            if (v && v.val()) {
+              that.set("_profilesDoc", v.val());
+            }
+            return that.fireApp.database().ref("/review").once("value");
+          })
+          .then(function(v) {
+            if (v && v.val()) {
+              that.set("_reviewDoc", v.val());
+            }
+            return that.fireApp.database().ref("speaker-review").once("value");
+          })
+          .then(function(v) {
+            if (v && v.val()) {
+              that.set("_speakerReviewDoc", v.val());
+            }
+            return that.fireApp.database().ref("/proposal").once("value");
+          })
+          .then(function(v) {
+            if (v && v.val()) {
+              that.set("_proposalDoc", v.val());
+            }
+            return that.fireApp.database().ref("/conference").once("value");
+          })
+          .then(function(v) {
+            if (v && v.val()) {
+              that.set("_conferenceDoc", v.val());
+            }
+            // call merge
+            that._mergeProposals(that._conferenceDoc, that._reviewDoc, that._speakerReviewDoc,
+              that._profileDoc, that._profilesDoc, that._proposaDoc, that._conferenceId);
+          });
+        },
+        _mergeProposals: function(conferenceDoc, reviewDoc, speakerReviewDoc, profileDoc, profilesDoc, proposalDoc, conferenceId) {
+          var proposals = [];
+          // get list of all proposals for the conference
+          if (conferenceDoc && conferenceId in conferenceDoc) {
+            var conference = conferenceDoc[conferenceId];
+            this.set('_conference', conference.name);
+          }
+          if (reviewDoc && speakerReviewDoc && profileDoc && profilesDoc && proposalDoc && conferenceId && conferenceId in proposalDoc) {
+            // do something
+            var speakerId;
+            var proposalId;
+            for (speakerId in proposalDoc[conferenceId]) {
+              if (proposalDoc[conferenceId][speakerId] instanceof Object) {
+                // find the speaker profile
+                var speaker = {};
+                if (speakerId in profileDoc) {
+                  speaker = {
+                    bio: profileDoc[speakerId].bio,
+                    comment: profileDoc[speakerId].comment,
+                    displayName: profileDoc[speakerId].displayName,
+                    email: profileDoc[speakerId].email,
+                    firstName: profileDoc[speakerId].firstName
+                  };
+                }
+                else if (speakerId in profilesDoc) {
+                  speaker = {
+                    displayName: profilesDoc[speakerId].displayName,
+                    email: profilesDoc[speakerId].email,
+                    bio: 'no bio provided',
+                    comment: 'no profile submitted',
+                    firstName: 'unknown'
+                  }
+                }
+                else {
+                  speaker = {
+                    displayName: speakerId,
+                    email: "",
+                    bio: "",
+                    comment: "",
+                    firstName: ""
+                  }
+                }
+                // find the speaker review
+                if (speakerId in speakerReviewDoc) {
+                  speaker.reviewComment = speakerReviewDoc[speakerId].comment;
+                  speaker.rating = parseInt(speakerReviewDoc[speakerId].rating);
+                }
+                else {
+                  speaker.reviewComment = 'not reviewed';
+                  speaker.rating = 0;
+                }
+                // now loop through the proposals
+                var propList = proposalDoc[conferenceId][speakerId];
+                for (proposalId in propList) {
+                  if (propList[proposalId] instanceof Object) {
+                    // find the reviews of the proposal
+                    var reviewer;
+                    var ratingSum = 0;
+                    var ratingCount = 0;
+                    var reviewText = "";
+                    for (reviewer in reviewDoc[conferenceId]) {
+                      var rpart = reviewDoc[conferenceId][reviewer];
+                      if (rpart instanceof Object) {
+                        if (speakerId in rpart && proposalId in rpart[speakerId]) {
+                          var review = rpart[speakerId][proposalId];
+                          if (review instanceof Object) {
+                            if (rating in review) {
+                              ratingSum += parseInt(review.rating);
+                              ratingCount++;
+                            }
+                            if (comment in review && review.comment != "") {
+                              reviewText = reviewText + "\n" + review.comment;
+                            }
+                          }
+                        }
+                      }
+                    }
+                    if (ratingCount == 0) ratingCount = 1;
+                    var proposal = {
+                      speaker: speakerId,
+                      key: proposalId,
+                      abstract: propList[proposalId].abstract,
+                      duration: propList[proposalId].duration,
+                      title: propList[proposalId].title,
+                      talkComment: propList[proposalId].comment,
+                      firstName: speaker.firstName,
+                      displayName: speaker.displayName,
+                      email: speaker.email,
+                      bio: speaker.bio,
+                      speakerComment: speaker.comment,
+                      speakerRating: speaker.rating,
+                      speakerReview: speaker.reviewComment,
+                      rating: 2 * (ratingSum / ratingCount) + speaker.rating,
+                      talkReview: reviewText
+                    }
+                    proposals.push(proposal);
+                  }
+                }
+              }
+            }
+            // sort proposals by rating
+            proposals = proposals.sort(function(a, b) {
+              if (a.rating < b.rating) return 1;
+              if (a.rating == b.rating) return 0;
+              return -1;
+            });
+            this.set("_proposals", proposals);
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>
+ 

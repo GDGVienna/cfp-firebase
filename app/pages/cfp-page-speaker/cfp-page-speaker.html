@@ -1,0 +1,191 @@
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="cfp-page-speaker">
+  <style is="custom-style" include="shared-styles iron-flex iron-flex-alignment">
+    paper-material {
+      @apply(--paper-font-body2);
+    };
+    div.speakers {
+      @apply(--layout-flex);
+      @apply(--layout-wrap);
+      @apply(--layout-horizontal);
+    };
+    div.speakers paper-material {
+      width: 300px;
+      height: 200px;
+      overflow: hidden;
+    };
+    div.speakers table th {
+      text-align: left;
+      vertical-align: top;
+    };
+    div.speakers table td {
+      text-align: left;
+      vertical-align: top;
+    };
+    paper-fab.fab-grey {
+      --paper-fab-background: var(--google-grey-500);
+    };
+  </style>
+  <template>
+    <firebase-document path="/profile" data="{{_speakersDoc}}"></firebase-document>
+    <firebase-document path="/speaker-review" data="{{_reviewDoc}}"></firebase-document>
+    <cfp-speaker with-backdrop id="speakerForm" fire-app="[[fireApp]]" on-submit="_forceReload"></cfp-speaker>
+    <template is="dom-if" if="[[isLoggedIn]]" restamp>
+      <p hidden$="[[_hasAccess]]">You don't have access to review speakers.</p>
+      <paper-toggle-button hidden$="[[!_hasAccess]]" active="{{_filterNewOnly}}">New Speakers only</paper-toggle-button>
+      <div hidden$="[[!_hasAccess]]" class="speakers">
+        <template id="speaker-reviews" is="dom-repeat" items="{{_speakers}}" as="speaker" filter="[[_computeFilter(_filterNewOnly)]]">
+          <template is="dom-if" if="{{_restampFlag}}" restamp>
+            <paper-material elevation="1">
+              <h2>[[speaker.displayName]]</h2>
+              <!-- show rating -->
+              <paper-fab on-tap="_openForm" data-speaker$="[[speaker.key]]" style="float:right;" class$="[[_ratingClass(speaker)]]" icon="[[_ratingIcon(speaker)]]" title="[[_ratingTitle(speaker)]]"></paper-fab>
+              <p>[[speaker.bio]]</p>
+              <p class="email">E-Mail: <a href="mailto:[[speaker.email]]">speaker.email</a></p>
+            </paper-material>
+          </template>
+        </template>
+      </div>
+    </template>
+    <div hidden$="[[isLoggedIn]]">Please login first to review proposals</div>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'cfp-page-speaker',
+        properties: {
+          fireApp: {
+            type: Object,
+            notify: true,
+            value: {}
+          },
+          isLoggedIn: {
+            type: Boolean,
+            notify: true
+          },
+          _speakersDoc: {
+            type: Object,
+            notify: true
+          },
+          _reviewDoc: {
+            type: Object,
+            notify: true
+          },
+          _hasAccess: {
+            type: Boolean,
+            computed: "_isNotNull(_speakers)",
+            notify: true
+          },
+          _speakers: {
+            type: Array,
+            notify: true
+          },
+          _filterNewOnly: {
+            type: Boolean,
+            notify: true,
+            observer: "_forceReload"
+          },
+          _restampFlag: {
+            type: Boolean,
+            value: true
+          }
+        },
+        observers: [
+          "_mergeSpeakers(_speakersDoc, _reviewDoc)"
+        ],
+        _isNotNull: function(x) {
+          return x && x.length > 0;
+        },
+        _forceReload: function() {
+          var that = this;
+          this.set("_restampFlag", false);
+          this.async(function() {
+            that.set("_restampFlag", true);
+          });
+        },
+        _mergeSpeakers: function(speakersDoc, reviewDoc) {
+          var speaker;
+          var speakerId;
+          // console.log("speakersDoc: " + JSON.stringify(speakersDoc));
+          // console.log("reviewDoc: " + JSON.stringify(reviewDoc));
+          var speakersMerged = [];
+          for (speakerId in speakersDoc) {
+            if (speakersDoc[speakerId] instanceof Object) {
+              speaker = {
+                email: speakersDoc[speakerId].email,
+                firstName: speakersDoc[speakerId].firstName,
+                displayName: speakersDoc[speakerId].displayName,
+                bio: speakersDoc[speakerId].bio,
+                key: speakerId
+              };
+              if (speakerId in reviewDoc) {
+                speaker['review'] = {
+                  rating: reviewDoc[speakerId].rating,
+                  comment: reviewDoc[speakerId].comment
+                };
+              }
+              speakersMerged.push(speaker);
+            }
+          }
+          // console.log(JSON.stringify(speakersMerged));
+          // return speakersMerged;
+          if (speakersMerged.length) {
+            this.set("_speakers", speakersMerged);
+          }
+          // this.set("_speakers", speakersMerged);
+        },
+        _ratingIcon: function(p) {
+          console.log(JSON.stringify(p));
+          if (!p.review) {
+            // console.log("no review");
+            return "create";
+          }
+          // console.log("has review!");
+          // console.log(p.review.rating);
+          var rating = p.review.rating;
+          if (rating < 0) {
+            return "image:exposure-neg" + rating;
+          }
+          if (rating > 0) {
+            return "image:exposure-plus-" + rating;
+          }
+          return "image:exposure-zero";
+        },
+        _ratingClass: function(p) {
+          if (!p.review) {
+            return "fab-normal";
+          }
+          return "fab-grey";
+        },
+        _ratingTitle: function(p) {
+          if (!p.review) {
+            return "Rate...";
+          }
+          return p.review.comment;
+        },
+        _computeFilter: function(flag) {
+          if (flag) {
+            return function(p) {
+              return !p.review;
+            }
+          }
+          else {
+            return null;
+          }
+        },
+        _openForm: function(e) {
+          var f = Polymer.dom(e);
+          if (f && f.localTarget && f.localTarget.dataset) {
+            var speaker = f.localTarget.dataset.speaker;
+            // console.log('Speaker ID: ' + speaker);
+            this.$.speakerForm.openForm(speaker);
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>
+ 

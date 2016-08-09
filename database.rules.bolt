@@ -116,9 +116,14 @@ path /profiles {
 
 path /conference/{conf} is Conference;
 
+path /profile {
+  read() { isAdmin() }
+  write() { isAdmin() }
+}
+
 path /profile/{uid} is Profile {
-  read() { isAdmin() || isCurrentUser(uid) }
-  write() { isAdmin() || isCurrentUser(uid) }
+  read() { isCurrentUser(uid) }
+  write() { isCurrentUser(uid) }
 }
 
 // Admin can read and write all proposals
@@ -149,4 +154,10 @@ path /proposal/{conf}/{uid}/{id} is Proposal;
 path /review/{conf}/{uid} {
   read() { isAdmin() || (isReviewer(conf) && isCurrentUser(uid)) }
   write() { isAdmin() || (isReviewer(conf) && isCurrentUser(uid)) }
+}
+
+// admin can see and create speaker reviews
+path /speaker-review {
+  read() { isAdmin() }
+  write() { isAdmin() }
 }

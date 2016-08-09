@@ -65,6 +65,8 @@
       ".write": "true"
     },
     "profile": {
+      ".read": "auth != null && root.child('admin').child(auth.uid).val() == true",
+      ".write": "auth != null && newData.parent().child('admin').child(auth.uid).val() == true",
       "$uid": {
         ".validate": "newData.hasChildren()",
         "bio": {
@@ -90,8 +92,8 @@
         "$other": {
           ".validate": "false"
         },
-        ".read": "auth != null && root.child('admin').child(auth.uid).val() == true || auth != null && auth.uid == $uid",
-        ".write": "auth != null && newData.parent().parent().child('admin').child(auth.uid).val() == true || auth != null && auth.uid == $uid"
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
       }
     },
     "proposal": {
@@ -133,6 +135,10 @@
           ".write": "auth != null && newData.parent().parent().parent().child('admin').child(auth.uid).val() == true || auth != null && (auth != null && newData.parent().parent().parent().child('profile').child(auth.uid).val() != null && newData.parent().parent().parent().child('profile').child(auth.uid).child('secret').val() != null && newData.parent().parent().parent().child('profile').child(auth.uid).child('secret').child($conf).val() != null) && newData.parent().parent().parent().child('secret').child($conf).val() != null && newData.parent().parent().parent().child('secret').child($conf).child('reviewer').val() != null && newData.parent().parent().parent().child('secret').child($conf).child('reviewer').child(newData.parent().parent().parent().child('profile').child(auth.uid).child('secret').child($conf).val()).val() != null && (auth != null && auth.uid == $uid)"
         }
       }
+    },
+    "speaker-review": {
+      ".read": "auth != null && root.child('admin').child(auth.uid).val() == true",
+      ".write": "auth != null && newData.parent().child('admin').child(auth.uid).val() == true"
     }
   }
 }

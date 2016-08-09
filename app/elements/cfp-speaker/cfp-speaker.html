@@ -1,0 +1,205 @@
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-behavior.html">
+<link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-shared-styles.html">
+
+<dom-module id="cfp-speaker">
+  <style is="custom-style" include="paper-dialog-shared-styles">
+    paper-fab.icon-unselected {
+      --paper-fab-background: var(--google-grey-500);
+    };
+  </style>
+  <template>
+    <firebase-document path="/profile/[[speakerId]]" data="{{_speakerDoc}}"></firebase-document>
+    <firebase-document path="/speaker-review/[[speakerId]]" data="{{_reviewDoc}}"></firebase-document>
+    <h2>[[_speakerDoc.firstName]]</h2>
+    <form is="iron-form" id="speaker-container">
+      <paper-input required label="First Name (*)" value="{{_firstName}}"></paper-input>
+      <paper-input required label="Display Name (*)" value="{{_displayName}}"></paper-input>
+      <paper-input required label="E-Mail (*)" value="{{_email}}"></paper-input>
+      <paper-textarea required rows="2" label="Short Bio (*)" value="{{_bio}}"></paper-textarea>
+      <paper-textarea rows="2" label="Speakers Comment" value="{{_speakerComment}}"></paper-textarea>
+      <paper-textarea rows="2" label="Review Comment" value="{{_reviewComment}}"></paper-textarea>
+      <div class="buttons" on-tap="_saveRating">
+        <paper-fab hidden$="[[_equals(_rating, -2)]]" data-rating="-2" icon="image:exposure-neg-2" class="icon-unselected"></paper-fab>
+        <paper-fab hidden$="[[!_equals(_rating, -2)]]" data-rating="-2" icon="image:exposure-neg-2"></paper-fab>
+        <paper-fab hidden$="[[_equals(_rating, -1)]]" data-rating="-1" icon="image:exposure-neg-1" class="icon-unselected"></paper-fab>
+        <paper-fab hidden$="[[!_equals(_rating, -1)]]" data-rating="-1" icon="image:exposure-neg-1"></paper-fab>
+        <paper-fab hidden$="[[_equals(_rating, 0)]]" data-rating="0" icon="image:exposure-zero" class="icon-unselected"></paper-fab>
+        <paper-fab hidden$="[[!_equals(_rating, 0)]]" data-rating="0" icon="image:exposure-zero"></paper-fab>
+        <paper-fab hidden$="[[_equals(_rating, 1)]]" data-rating="1" icon="image:exposure-plus-1" class="icon-unselected"></paper-fab>
+        <paper-fab hidden$="[[!_equals(_rating, 1)]]" data-rating="1" icon="image:exposure-plus-1"></paper-fab>
+        <paper-fab hidden$="[[_equals(_rating, 2)]]" data-rating="2" icon="image:exposure-plus-2" class="icon-unselected"></paper-fab>
+        <paper-fab hidden$="[[!_equals(_rating, 2)]]" data-rating="2" icon="image:exposure-plus-2"></paper-fab>
+        <paper-button raised dialog-dismiss>Cancel</paper-button>
+      </div>
+    </form>
+  </template>
+  <script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'cfp-speaker',
+        behaviors: [
+          Polymer.PaperDialogBehavior
+        ],
+        properties: {
+          fireApp: {
+            type: Object,
+            notify: true,
+            value: {}
+          },
+          speakerId: {
+            type: String,
+            notify: true
+          },
+          _speakerDoc: {
+            type: Object,
+            notify: true
+          },
+          _reviewDoc: {
+            type: Object,
+            notify: true,
+          },
+          _firstName: {
+            type: String,
+            notify: true,
+            value: ''
+          },
+          _displayName: {
+            type: String,
+            notify: true,
+            value: ''
+          },
+          _email: {
+            type: String,
+            notify: true,
+            value: ''
+          },
+          _bio: {
+            type: String,
+            notify: true,
+            value: ''
+          },
+          _rating: {
+            type: Number,
+            notify: true,
+            value: 0
+          },
+          _reviewComment: {
+            type: String,
+            notify: true
+          }
+        },
+        _saveRating: function(e) {
+          var f = Polymer.dom(e);
+          if (f && f.localTarget && f.localTarget.dataset) {
+            if (typeof f.localTarget.dataset.rating !== "undefined") {
+              var dialog = this;
+              var rating = f.localTarget.dataset.rating;
+              var path = '/speaker-review/' + dialog.speakerId;
+              var path2 = '/profile/' + dialog.speakerId;
+              console.log("Path: ");
+              console.log(path);
+              dialog.fireApp.database()
+              .ref(path)
+              .set({
+                comment: dialog._reviewComment,
+                rating: rating
+              })
+              .then(function() {
+                dialog.fireApp.database()
+                .ref(path2)
+                .set({
+                  firstName: dialog._firstName,
+                  displayName: dialog._displayName,
+                  email: dialog._email,
+                  bio: dialog._bio,
+                  comment: dialog._speakerComment
+                }).then(function() {
+                  dialog.close();
+                  dialog.fire("submit");
+                });
+              });
+            }
+          }
+        },
+        openForm(speakerId) {
+          var that = this;
+          var path = '/speaker-review/' + speakerId;
+          var path2 = '/profile/' + speakerId;
+          var rating = 99;
+          var reviewComment = "";
+          var firstName = "";
+          var displayName = "";
+          var email = "";
+          var bio = "";
+          var speakerComment = "";
+          var val;
+          this.set('speakerId', speakerId);
+          this.fireApp.database()
+            .ref(path)
+            .once("value")
+            .then(function(data) {
+              console.log("Firebase data - speaker review (path = " + path + ")");
+              if (data) {
+                console.log(data.val());
+                val = data.val();
+                if (val) {
+                  if ('rating' in val) {
+                    rating = val.rating;
+                  }
+                  if ('comment' in val) {
+                    reviewComment = val.comment;
+                  }
+                }
+              }
+              that.set('_rating', rating);
+              that.set('_reviewComment', reviewComment);
+              return that.fireApp.database()
+                .ref(path2)
+                .once("value");
+            })
+            .then(function(data) {
+              console.log("Speaker data (path = " + path2 + ")");
+              if (data) {
+                console.log(data.val());
+                val = data.val();
+                if (val) {
+                  if ('firstName' in val) {
+                    firstName = val.firstName;
+                  }
+                  if ('displayName' in val) {
+                    displayName = val.displayName;
+                  }
+                  if ('bio' in val) {
+                    bio = val.bio;
+                  }
+                  if ('email' in val) {
+                    email = val.email;
+                  }
+                  if ('comment' in val) {
+                    speakerComment = val.comment;
+                  }
+                }                
+              }
+              that.set('_firstName', firstName);
+              that.set('_displayName', displayName);
+              that.set('_bio', bio);
+              that.set('_email', email);
+              that.set('_speakerComment', speakerComment);
+              that.open();
+            })
+            .catch(function(err) {
+              console.log("Error in FB");
+              console.log(err);
+            });
+        },
+        _equals: function(x, y) {
+          return x == y;
+        }
+      });
+    })();
+  </script>
+</dom-module>
+ 
