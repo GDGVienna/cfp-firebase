@@ -10,30 +10,31 @@
 <script src="../../bower_components/page/page.js"></script>
 
 <dom-module id="cfp-conference">
-  <style is="custom-style" include="shared-styles">
-    :host table th {
-      text-align: left;
-      vertical-align: top;
-    };
-    :host table td {
-      text-align: left;
-      vertical-align: top;
-    };
-    :host .conf-closed {
-      color: #b0b0b0;
-    };
-    :host .conf-closed .important {
-      color: #000;
-    };
-    :host .conf-closed img {
-      filter: grayscale(100%);
-      -webkit-filter: grayscale(100%);
-    };
-    paper-fab.fab-grey {
-      --paper-fab-background: var(--google-grey-500);
-    };
-  </style>
   <template>
+    <style is="custom-style" include="shared-styles">
+      :host table th {
+        text-align: left;
+        vertical-align: top;
+      };
+      :host table td {
+        text-align: left;
+        vertical-align: top;
+      };
+      :host .conf-closed {
+        color: #b0b0b0;
+      };
+      :host .conf-closed .important {
+        color: #000;
+      };
+      :host .conf-closed img {
+        filter: grayscale(100%);
+        -webkit-filter: grayscale(100%);
+      };
+      paper-fab.fab-grey {
+        --paper-fab-background: var(--google-grey-500);
+      };
+    </style>
+
     <firebase-query path="/proposal/[[conference.$key]]/[[userId]]" data="{{_proposals}}"></firebase-query>
     <span class$="[[_confCssClass(conference)]]">
       <!-- submit proposal -->

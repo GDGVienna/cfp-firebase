@@ -3,19 +3,20 @@
 <link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-shared-styles.html">
 
 <dom-module id="cfp-review">
-  <style is="custom-style" include="paper-dialog-shared-styles">
-    .review-abstract div {
-      padding-left: 20px;
-      padding-right: 20px;
-    }
-    div.proposal-comment {
-      font-style: italic;
-    }
-    paper-fab.icon-unselected {
-      --paper-fab-background: var(--google-grey-500);
-    };
-  </style>
   <template>
+    <style is="custom-style" include="paper-dialog-shared-styles">
+      .review-abstract div {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      div.proposal-comment {
+        font-style: italic;
+      }
+      paper-fab.icon-unselected {
+        --paper-fab-background: var(--google-grey-500);
+      };
+    </style>
+
     <firebase-document path="/review/[[conferenceId]]/[[userId]]/[[speakerId]]/[[proposalId]]" data="{{_reviewDoc}}"></firebase-document>
     <firebase-document path="/proposal/[[conferenceId]]/[[speakerId]]/[[proposalId]]" data="{{_proposalDoc}}"></firebase-document>
     <firebase-document path="/conference/[[conferenceId]]" data="{{_conferenceDoc}}"></firebase-document>

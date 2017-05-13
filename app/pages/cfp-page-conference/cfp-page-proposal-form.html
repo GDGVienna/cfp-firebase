@@ -4,8 +4,8 @@
 <link rel="import" href="../../styles/shared-styles.html">
 
 <dom-module id="cfp-page-proposal-form">
-  <style is="custom-style" include="shared-styles"></style>
   <template>
+    <style is="custom-style" include="shared-styles"></style>
     <section>
       <paper-material class="focus-target" elevation="1">
         <cfp-proposal-submit fire-app="[[fireapp]]" hidden$="[[!isLoggedIn]]" conference-id="[[conferenceId]]" user-id="[[user.uid]]"></cfp-proposal-submit>

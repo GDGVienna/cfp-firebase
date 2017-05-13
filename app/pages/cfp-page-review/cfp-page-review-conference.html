@@ -1,33 +1,34 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <dom-module id="cfp-page-review-conference">
-  <style is="custom-style" include="shared-styles iron-flex iron-flex-alignment">
-    paper-material {
-      @apply(--paper-font-body2);
-    };
-    div.proposals {
-      @apply(--layout-flex);
-      @apply(--layout-wrap);
-      @apply(--layout-horizontal);
-    };
-    div.proposals paper-material {
-      width: 300px;
-      height: 200px;
-      overflow: hidden;
-    };
-    div.proposals table th {
-      text-align: left;
-      vertical-align: top;
-    };
-    div.proposals table td {
-      text-align: left;
-      vertical-align: top;
-    };
-    paper-fab.fab-grey {
-      --paper-fab-background: var(--google-grey-500);
-    };
-  </style>
   <template>
+    <style is="custom-style" include="shared-styles iron-flex iron-flex-alignment">
+      paper-material {
+        @apply(--paper-font-body2);
+      };
+      div.proposals {
+        @apply(--layout-flex);
+        @apply(--layout-wrap);
+        @apply(--layout-horizontal);
+      };
+      div.proposals paper-material {
+        width: 300px;
+        height: 200px;
+        overflow: hidden;
+      };
+      div.proposals table th {
+        text-align: left;
+        vertical-align: top;
+      };
+      div.proposals table td {
+        text-align: left;
+        vertical-align: top;
+      };
+      paper-fab.fab-grey {
+        --paper-fab-background: var(--google-grey-500);
+      };
+    </style>
+
     <firebase-document path="/review/[[conferenceId]]/[[userId]]" data="{{_reviewDoc}}"></firebase-document>
     <firebase-document id="confReviewPropFb" path="/proposal/[[conferenceId]]" data="{{_proposalDoc}}"></firebase-document>
     <cfp-review with-backdrop id="reviewForm" conference-id="[[conferenceId]]" fire-app="[[fireApp]]" user-id="[[userId]]" on-reviewed="_forceReload"></cfp-review>

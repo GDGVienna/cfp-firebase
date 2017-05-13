@@ -3,15 +3,15 @@
 <link rel="import" href="../../styles/shared-styles.html">
 
 <dom-module id="cfp-profile-menu">
-  <style is="custom-style" include="shared-styles">
-    iron-image {
-      width: 40px;
-      height: 40px;
-      border-radius: 20px;
-      margin-right: 10px;
-    }
-  </style>
   <template>
+    <style is="custom-style" include="shared-styles">
+      iron-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        margin-right: 10px;
+      }
+    </style>
     <iron-media-query query="(max-width: 720px)" query-matches="{{_isMobile}}"></iron-media-query>
     <paper-menu-button hidden$="[[!isLoggedIn]]" horizontal-align="right">
       <paper-button class="dropdown-trigger">

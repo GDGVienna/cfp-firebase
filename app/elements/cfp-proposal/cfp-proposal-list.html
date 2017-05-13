@@ -11,33 +11,33 @@
 <link rel="import" href="../../styles/shared-styles.html">
 
 <dom-module id="cfp-proposal-list">
-  <style is="custom-style" include="shared-styles iron-flex iron-flex-alignment">
-    paper-material {
-      @apply(--paper-font-body2);
-    };
-    div.proposals {
-      @apply(--layout-flex);
-      @apply(--layout-wrap);
-      @apply(--layout-horizontal);
-    };
-    div.proposals paper-material {
-      width: 480px;
-      height: 360px;
-      overflow: hidden;
-    };
-    div.proposals table th {
-      text-align: left;
-      vertical-align: top;
-    };
-    div.proposals table td {
-      text-align: left;
-      vertical-align: top;
-    };
-    paper-fab.fab-grey {
-      --paper-fab-background: var(--google-grey-500);
-    };
-  </style>
   <template>
+    <style is="custom-style" include="shared-styles iron-flex iron-flex-alignment">
+      paper-material {
+        @apply(--paper-font-body2);
+      };
+      div.proposals {
+        @apply(--layout-flex);
+        @apply(--layout-wrap);
+        @apply(--layout-horizontal);
+      };
+      div.proposals paper-material {
+        width: 480px;
+        height: 360px;
+        overflow: hidden;
+      };
+      div.proposals table th {
+        text-align: left;
+        vertical-align: top;
+      };
+      div.proposals table td {
+        text-align: left;
+        vertical-align: top;
+      };
+      paper-fab.fab-grey {
+        --paper-fab-background: var(--google-grey-500);
+      };
+    </style>
     <firebase-query path="/proposal/[[conferenceId]]/[[userId]]" order-by-child="title" data="{{_proposals}}"></firebase-query>
     <firebase-document path="/conference/[[conferenceId]]" data="{{_conference}}"></firebase-document>
     <firebase-state logged="{{logged}}"></firebase-state>

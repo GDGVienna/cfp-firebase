@@ -31,10 +31,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
   };
 
+  // Debug function to log data
+  app.log = function(text) {
+    console.log(text);
+  }
+
   // Listen for template bound event to know when bindings
   // have resolved and content has been stamped to the page
   app.addEventListener('dom-change', function() {
-    console.log('Our app is ready to rock!');
+    app.log('Our app is ready to rock!');
   });
   
   // See https://github.com/Polymer/polymer/issues/1381
@@ -107,55 +112,90 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   app.logout = function() {
     app.$.auth.signOut()
     .then(function(e) {
-      console.log(e);
+      app.log(e);
       app.message("Logout worked!");
+      app.fire('logout-success');
     })
     .catch(function(e) {
-      console.log(e);
+      app.log(e);
       app.message("Logout failed!");
+      app.fire('logout-failure');
     });
   }
+
+  // bubble login-success to the login dialog
+  window.addEventListener('login-success', function(e) {
+    app.$.authDialog.fire('login-success', e.details);
+  });
+
+  // bubble login-failure to the login dialog
+  window.addEventListener('login-failure', function(e) {
+    app.$.authDialog.fire('login-failure', e.details);
+  });
+  
   // act on login via provider
   window.addEventListener('login-provider', function(e) {
     app.$.auth.provider = e.detail.provider;
     app.$.auth.signInWithPopup()
     .then(function(e) {
-      console.log(e);
-      app.message("Login with provider worked!");
+      app.log(e);
+      app.log(app.$.auth.user);
+      app.message("Login with provider worked");
+      app.fire('login-success');
     })
     .catch(function(e) {
       console.log(e);
-      app.$.auth.signInWithRedirect();
+      app.$.auth.signInWithRedirect()
+      .then(function(e) {
+        app.log(e);
+        app.message("Login with provider worked");
+        app.fire('login-success');
+      })
+      .catch(function(e) {
+        app.log(e);
+        app.message("Login with provider failed");
+        app.fire('login-failure');
+      });
     });
   });
 
   // act on login with password
   window.addEventListener('login-password', function(e) {
-    console.log(e);
+    app.log(e);
     app.$.auth.signInWithEmailAndPassword(
       e.detail.email,
       e.detail.password
     )
     .then(function(e) {
       app.message("Login with password worked");
+      app.fire('login-success');
     })
     .catch(function(e) {
       app.message("Login with password failed");
+      app.fire('login-failure');
     });
   });
 
   // act on password reset
   window.addEventListener('reset-password', function(e) {
-    console.log(e);
+    app.log(e);
   });
 
   // act on signup with password
   window.addEventListener('signup-password', function(e) {
-    console.log(e);
+    app.log(e);
     app.$.auth.createUserWithEmailAndPassword(
       e.detail.email,
       e.detail.password
-    );
+    )
+    .then(function(e) {
+      app.message("You are registered successfully");
+      app.fire('register-success');
+    })
+    .catch(function(e) {
+      app.message("Registering failed");
+      app.fire('register-failure');
+    });
   });
 
 })(document);

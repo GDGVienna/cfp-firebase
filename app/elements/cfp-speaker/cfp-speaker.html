@@ -3,12 +3,12 @@
 <link rel="import" href="../../bower_components/paper-dialog-behavior/paper-dialog-shared-styles.html">
 
 <dom-module id="cfp-speaker">
-  <style is="custom-style" include="paper-dialog-shared-styles">
-    paper-fab.icon-unselected {
-      --paper-fab-background: var(--google-grey-500);
-    };
-  </style>
   <template>
+    <style is="custom-style" include="paper-dialog-shared-styles">
+      paper-fab.icon-unselected {
+        --paper-fab-background: var(--google-grey-500);
+      };
+    </style>
     <firebase-document path="/profile/[[speakerId]]" data="{{_speakerDoc}}"></firebase-document>
     <firebase-document path="/speaker-review/[[speakerId]]" data="{{_reviewDoc}}"></firebase-document>
     <h2>[[_speakerDoc.firstName]]</h2>

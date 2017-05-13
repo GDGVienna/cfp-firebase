@@ -1,33 +1,34 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <dom-module id="cfp-page-speaker">
-  <style is="custom-style" include="shared-styles iron-flex iron-flex-alignment">
-    paper-material {
-      @apply(--paper-font-body2);
-    };
-    div.speakers {
-      @apply(--layout-flex);
-      @apply(--layout-wrap);
-      @apply(--layout-horizontal);
-    };
-    div.speakers paper-material {
-      width: 300px;
-      height: 200px;
-      overflow: hidden;
-    };
-    div.speakers table th {
-      text-align: left;
-      vertical-align: top;
-    };
-    div.speakers table td {
-      text-align: left;
-      vertical-align: top;
-    };
-    paper-fab.fab-grey {
-      --paper-fab-background: var(--google-grey-500);
-    };
-  </style>
   <template>
+    <style is="custom-style" include="shared-styles iron-flex iron-flex-alignment">
+      paper-material {
+        @apply(--paper-font-body2);
+      };
+      div.speakers {
+        @apply(--layout-flex);
+        @apply(--layout-wrap);
+        @apply(--layout-horizontal);
+      };
+      div.speakers paper-material {
+        width: 300px;
+        height: 200px;
+        overflow: hidden;
+      };
+      div.speakers table th {
+        text-align: left;
+        vertical-align: top;
+      };
+      div.speakers table td {
+        text-align: left;
+        vertical-align: top;
+      };
+      paper-fab.fab-grey {
+        --paper-fab-background: var(--google-grey-500);
+      };
+    </style>
+
     <firebase-document path="/profile" data="{{_speakersDoc}}"></firebase-document>
     <firebase-document path="/speaker-review" data="{{_reviewDoc}}"></firebase-document>
     <cfp-speaker with-backdrop id="speakerForm" fire-app="[[fireApp]]" on-submit="_forceReload"></cfp-speaker>

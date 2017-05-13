@@ -77,6 +77,10 @@
         observers: [
           "_openedOrClosed(opened)"
         ],
+        listeners: {
+          "login-success": "_loginSuccess",
+          "login-failure": "_loginFailure"
+        },
         properties: {
           formType: {
             type: Number,
@@ -135,14 +139,14 @@
          if (e && e.target && e.target.getAttribute('provider')) {
             this.fire('login-provider',
               { provider: e.target.getAttribute('provider') });
-            this.close();
+            // this.close();
           }
         },
         _handleLogin: function(e) {
           this.fire('login-password',
             { email: this.$.email.value,
               password: this.$.password.value });
-          this.close();
+          // this.close();
         },
         _handleReset: function(e) {
           this.fire('reset-password',
@@ -151,6 +155,13 @@
         },
         _switchToLogin: function(e) {
           this.formType = 1;
+        },
+        _loginSuccess: function(e) {
+          console.log("Got success message!");
+          this.close();
+        },
+        _loginFailure: function(e) {
+          console.log("Got failure message!");
         }
       });
     })();

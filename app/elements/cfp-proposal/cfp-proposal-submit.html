@@ -10,9 +10,9 @@
 <link rel="import" href="../../styles/shared-styles.html">
 
 <dom-module id="cfp-proposal-submit">
-  <style is="custom-style" include="shared-styles">
-  </style>
   <template>
+    <style is="custom-style" include="shared-styles">
+    </style>
     <firebase-document id="fbPropDoc" path="/conference/[[conferenceId]]" data="{{_conference}}"></firebase-document>
     <h2>[[_conference.name]]</h2>
     <p><i>[[_conference.topics]]</i></p>

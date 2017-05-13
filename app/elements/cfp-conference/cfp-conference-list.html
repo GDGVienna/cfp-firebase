@@ -11,28 +11,28 @@
 <script src="../../bower_components/page/page.js"></script>
 
 <dom-module id="cfp-conference-list">
-  <style is="custom-style" include="shared-styles iron-flex iron-flex-alignment">
-    paper-material {
-      @apply(--paper-font-body2);
-    };
-    div.conferences {
-      @apply(--layout-flex);
-      @apply(--layout-wrap);
-      @apply(--layout-horizontal);
-    };
-    div.conferences paper-material {
-      width: 480px;
-    };
-    div.conferences table th {
-      text-align: left;
-      vertical-align: top;
-    };
-    div.conferences table td {
-      text-align: left;
-      vertical-align: top;
-    };
-  </style>
   <template>
+    <style is="custom-style" include="shared-styles iron-flex iron-flex-alignment">
+      paper-material {
+        @apply(--paper-font-body2);
+      };
+      div.conferences {
+        @apply(--layout-flex);
+        @apply(--layout-wrap);
+        @apply(--layout-horizontal);
+      };
+      div.conferences paper-material {
+        width: 480px;
+      };
+      div.conferences table th {
+        text-align: left;
+        vertical-align: top;
+      };
+      div.conferences table td {
+        text-align: left;
+        vertical-align: top;
+      };
+    </style>
 
     <firebase-query path="/conference" order-by-child="cfpTo" data="{{conferences}}">
     </firebase-query>
