@@ -4,6 +4,7 @@
       "$key1": {
         ".validate": "newData.isBoolean()"
       },
+      ".validate": "newData.hasChildren()",
       ".read": "auth != null && root.child('admin').child(auth.uid).val() == true",
       ".write": "auth != null && newData.parent().child('admin').child(auth.uid).val() == true"
     },
@@ -24,30 +25,31 @@
           ".validate": "newData.isNumber()"
         },
         "dateFrom": {
-          ".validate": "newData.isNumber() || newData.val() == null"
+          ".validate": "newData.isNumber()"
         },
         "dateTo": {
-          ".validate": "newData.isNumber() || newData.val() == null"
+          ".validate": "newData.isNumber()"
         },
         "topics": {
-          ".validate": "newData.isString() || newData.val() == null"
+          ".validate": "newData.isString()"
         },
         "logo": {
-          ".validate": "newData.isString() || newData.val() == null"
+          ".validate": "newData.isString()"
         },
         "url": {
-          ".validate": "newData.isString() || newData.val() == null"
+          ".validate": "newData.isString()"
         },
         "instructionsUrl": {
-          ".validate": "newData.isString() || newData.val() == null"
+          ".validate": "newData.isString()"
         },
         "where": {
-          ".validate": "newData.isString() || newData.val() == null"
+          ".validate": "newData.isString()"
         },
         "durations": {
           "$key2": {
             ".validate": "newData.isString()"
-          }
+          },
+          ".validate": "newData.hasChildren()"
         },
         "$other": {
           ".validate": "false"
@@ -70,24 +72,25 @@
       "$uid": {
         ".validate": "newData.hasChildren()",
         "bio": {
-          ".validate": "newData.isString() || newData.val() == null"
+          ".validate": "newData.isString()"
         },
         "firstName": {
-          ".validate": "newData.isString() || newData.val() == null"
+          ".validate": "newData.isString()"
         },
         "displayName": {
-          ".validate": "newData.isString() || newData.val() == null"
+          ".validate": "newData.isString()"
         },
         "email": {
-          ".validate": "newData.isString() && newData.val().matches(/[\\w+-]+@([\\w-]+\\.)+[\\w-]+/i) || newData.val() == null"
+          ".validate": "newData.isString() && newData.val().matches(/[\\w+-]+@([\\w-]+\\.)+[\\w-]+/i)"
         },
         "comment": {
-          ".validate": "newData.isString() || newData.val() == null"
+          ".validate": "newData.isString()"
         },
         "secret": {
           "$key2": {
             ".validate": "newData.isString()"
-          }
+          },
+          ".validate": "newData.hasChildren()"
         },
         "$other": {
           ".validate": "false"
@@ -116,10 +119,10 @@
               ".validate": "newData.isString()"
             },
             "duration": {
-              ".validate": "newData.isNumber() || newData.val() == null"
+              ".validate": "newData.isNumber()"
             },
             "comment": {
-              ".validate": "newData.isString() || newData.val() == null"
+              ".validate": "newData.isString()"
             },
             "$other": {
               ".validate": "false"
