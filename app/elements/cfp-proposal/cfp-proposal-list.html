@@ -40,14 +40,12 @@
     </style>
     <firebase-query path="/proposal/[[conferenceId]]/[[userId]]" order-by-child="title" data="{{_proposals}}"></firebase-query>
     <firebase-document path="/conference/[[conferenceId]]" data="{{_conference}}"></firebase-document>
-    <firebase-state logged="{{logged}}"></firebase-state>
     <h2>[[_conference.name]]</h2>
     <p><i>[[_conference.topics]]</i></p>
     <h3>Your Talk Proposals</h3>
     <div class="proposals">
-      <p hidden$="[[logged]]">Please login / sign-up to view your submitted proposals</p>
       <template is="dom-if" if="[[!_proposals.length]]">
-        <p hidden$="[[!logged]]">You did not submit any proposal yet.</p>
+        <p>You did not submit any proposal yet.</p>
       </template>
       <template is="dom-repeat" items="[[_proposals]]" as="proposal">
         <paper-material elevation="1">

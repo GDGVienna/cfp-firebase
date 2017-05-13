@@ -110,12 +110,6 @@
               var path = '/review/' + dialog.conferenceId +
                    '/' + dialog.userId + '/' + dialog.speakerId +
                    '/' + dialog.proposalId;
-              console.log("Path: ");
-              console.log(path);
-              console.log("Comment:");
-              console.log(comment);
-              console.log("Rating: ");
-              console.log(rating);
               dialog.fireApp.database()
               .ref(path)
               .set({
@@ -142,8 +136,6 @@
           this.fireApp.database()
             .ref(path)
             .once("value", function(data) {
-              console.log("Firebase data...");
-              console.log(data.val());
               val = data.val();
               if (val) {
                 if ('rating' in val) {
@@ -169,22 +161,17 @@
           if (this._conferenceDoc && 'durations' in this._conferenceDoc) {
             confDurations = this._conferenceDoc.durations;
             if (durIdx >= 0 && durIdx < confDurations.length) {
-              console.log(confDurations[durIdx]);
               return confDurations[durIdx];
             }
           }
           return "unknown";
         },
         _showDuration: function(propDoc, confDoc) {
-          console.log("Duration...");
-          console.log(JSON.stringify(propDoc));
-          console.log(JSON.stringify(confDoc));
           if (confDoc && propDoc && 'durations' in confDoc && 'duration' in propDoc) {
             var durIdx = propDoc.duration;
             var durations = confDoc.durations;
             if (durIdx >= 0 && durIdx < durations.length) {
               this.set('_duration', durations[durIdx]);
-              console.log("Updated to " + durations[durIdx]);
             }
           }
         }

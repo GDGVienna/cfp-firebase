@@ -130,8 +130,6 @@
           });
         },
         _flattenTwoDim: function(all) {
-          console.log("flatten...");
-          console.log(all);
           var flat = [];
           var i = 0;
           var speaker, proposal;
@@ -156,7 +154,6 @@
             return x.title < y.title ? -1
                : (x.title == y.title ? 0: 1);
           })
-          console.log(flat);
           return flat;
         },
         _mergePropsReviews: function(proposals, reviews) {
@@ -174,7 +171,6 @@
               };
             }
           }
-          console.log(JSON.stringify(proposals));
           // return proposals;
           if (this._proposalsMerged && this._proposalsMerged.length > 0) {
             this.splice("_proposalsMerged", 0, this._proposalsMerged.length);
@@ -199,13 +195,9 @@
           });
         },
         _ratingIcon: function(p) {
-          console.log(JSON.stringify(p));
           if (!p.review) {
-            console.log("no review");
             return "create";
           }
-          console.log("has review!");
-          console.log(p.review.rating);
           var rating = p.review.rating;
           if (rating < 0) {
             return "image:exposure-neg" + rating;

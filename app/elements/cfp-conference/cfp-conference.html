@@ -20,7 +20,7 @@
         text-align: left;
         vertical-align: top;
       };
-      :host .conf-closed {
+      :host .conf-closed, :host .conf-closed a {
         color: #b0b0b0;
       };
       :host .conf-closed .important {
@@ -29,6 +29,7 @@
       :host .conf-closed img {
         filter: grayscale(100%);
         -webkit-filter: grayscale(100%);
+        opacity: 0.5;
       };
       paper-fab.fab-grey {
         --paper-fab-background: var(--google-grey-500);
@@ -50,7 +51,7 @@
         </div>
       </a>
     <img style="max-height:50px; max-width:120px;" src="[[_confLogo]]">
-    <h2><a target="_blank" href="[[conference.url]]">[[conference.name]]</a></h2>
+    <h2>[[conference.name]]</h2>
     <p><i>[[conference.description]]</i></p>
     <table border="0">
       <tr>
@@ -67,7 +68,7 @@
       </tr>
       <tr>
         <th>Website:&nbsp;</th>
-        <td><a target="_blank" href="[[conference.url]]">[[conference.url]]</a></td>
+        <td><a target="_blank" href="[[conference.url]]">[[_confDisplayUrl(conference)]]</a></td>
       </tr>
     </table>
     <p class="important"><i>[[_cfpDateText(conference)]]</i></p>
@@ -187,6 +188,10 @@
           d = new Date(d);
           txt = txt + d.getDate() + " " + monthTxt[d.getMonth()] + " " + d.getFullYear();
           return txt;
+        },
+        _confDisplayUrl: function(conf) {
+          var urlArray = conf.url.split('/');
+          return urlArray[2] || conf.url;
         }
       });
     })();

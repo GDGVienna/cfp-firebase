@@ -38,7 +38,7 @@
     </firebase-query>
 
     <div class="conferences">
-    <template is="dom-repeat" items="[[conferences]]" as="conference">
+    <template is="dom-repeat" items="[[conferences]]" filter="_filter" sort="_compare" as="conference">
       <paper-material elevation="1">
         <cfp-conference fire-app="[[fireApp]]" allow-edit="[[allowEdit]]" user-id="[[user.uid]]" conference="[[conference]]"></cfp-conference>
       </paper-material>
@@ -77,6 +77,30 @@
             notify: true,
             value: {}
           }
+        },
+        _filter: function(a) {
+          return a.dateTo > Date.now();
+        },
+        _compare: function(a, b) {
+          var now = Date.now();
+          var aIsOpen = a.cfpFrom < now && a.cfpTo > now;
+          var bIsOpen = b.cfpFrom < now && b.cfpTo > now;
+          if (aIsOpen) {
+            // both open? The one closing sooner first
+            if (bIsOpen) {
+              return a.cfpTo > b.cfpTo ? 1 :
+                     (a.cfpTo == b.cfpTo ? 0 : -1);
+            }
+            return -1;
+          }
+          // we already know that a is not open ...
+          if (bIsOpen) {
+            return 1;
+          }
+          // both not open? The one closed later first
+          return a.cfpTo > b.cfpTo ? -1 :
+                 (a.cfpTo == b.cfpTo ? 0 : 1);
+
         }
       });
     })();

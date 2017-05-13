@@ -99,8 +99,6 @@
               var rating = f.localTarget.dataset.rating;
               var path = '/speaker-review/' + dialog.speakerId;
               var path2 = '/profile/' + dialog.speakerId;
-              console.log("Path: ");
-              console.log(path);
               dialog.fireApp.database()
               .ref(path)
               .set({
@@ -141,9 +139,7 @@
             .ref(path)
             .once("value")
             .then(function(data) {
-              console.log("Firebase data - speaker review (path = " + path + ")");
               if (data) {
-                console.log(data.val());
                 val = data.val();
                 if (val) {
                   if ('rating' in val) {
@@ -161,9 +157,7 @@
                 .once("value");
             })
             .then(function(data) {
-              console.log("Speaker data (path = " + path2 + ")");
               if (data) {
-                console.log(data.val());
                 val = data.val();
                 if (val) {
                   if ('firstName' in val) {

@@ -62,11 +62,9 @@
           this.$.submitProfile.disabled = !this.$.container.validate();
         },
         _isComplete: function(profile) {
-          console.log(profile);
           var rc = (!!profile && !!profile.firstName
                && !!profile.displayName && !!profile.bio != ''
                && !!profile.email);
-          console.log(rc);
           return rc;
         },
         _loadProfile: function(fProfile, xProfile) {

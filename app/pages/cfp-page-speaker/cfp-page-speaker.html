@@ -110,8 +110,6 @@
         _mergeSpeakers: function(speakersDoc, reviewDoc) {
           var speaker;
           var speakerId;
-          // console.log("speakersDoc: " + JSON.stringify(speakersDoc));
-          // console.log("reviewDoc: " + JSON.stringify(reviewDoc));
           var speakersMerged = [];
           for (speakerId in speakersDoc) {
             if (speakersDoc[speakerId] instanceof Object) {
@@ -131,21 +129,14 @@
               speakersMerged.push(speaker);
             }
           }
-          // console.log(JSON.stringify(speakersMerged));
-          // return speakersMerged;
           if (speakersMerged.length) {
             this.set("_speakers", speakersMerged);
           }
-          // this.set("_speakers", speakersMerged);
         },
         _ratingIcon: function(p) {
-          console.log(JSON.stringify(p));
           if (!p.review) {
-            // console.log("no review");
             return "create";
           }
-          // console.log("has review!");
-          // console.log(p.review.rating);
           var rating = p.review.rating;
           if (rating < 0) {
             return "image:exposure-neg" + rating;
@@ -181,7 +172,6 @@
           var f = Polymer.dom(e);
           if (f && f.localTarget && f.localTarget.dataset) {
             var speaker = f.localTarget.dataset.speaker;
-            // console.log('Speaker ID: ' + speaker);
             this.$.speakerForm.openForm(speaker);
           }
         }
