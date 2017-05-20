@@ -50,7 +50,7 @@
         <p hidden$="[[isLogin]]">or provide your email and choose a password:</p>
         <gold-email-input id="email" value="{{email}}" auto-validate></gold-email-input>
         <paper-input type="password" label="Password" value="{{password}}" id="password"></paper-input>
-        <paper-input type="password" error-message="The two password fiels do not match" invalid="[[!passwordMatch]]" label="Repeat Password" value="{{password2}}" id="password2" hidden$="[[isLogin]]"></paper-input>
+        <paper-input type="password" error-message="The two password fields do not match" invalid="[[!passwordMatch]]" label="Repeat Password" value="{{password2}}" id="password2" hidden$="[[isLogin]]"></paper-input>
         <br>
         <div hidden$="[[isLogin]]">
           <paper-button disabled="[[!passwordMatch]]" raised>Sign-Up</paper-button>
