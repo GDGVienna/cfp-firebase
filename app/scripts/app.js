@@ -50,12 +50,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     page.redirect(app.baseUrl);
   };
 
-  // go to the profile page
-  app.redirectProfile = function() {
+  // go to the profile page on 'profile-edit' event
+  window.addEventListener('profile-edit', function() {
     if (page.current != '/profile') {
       page.redirect('/profile');
     }
-  }
+  });
 
   // are we on the proposal list page?
   app.isProposalList = function(route) {
@@ -68,13 +68,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     app.$.appToast.open();
   }
 
-  // open cfp auth dialog
-  app.openLoginDialog = function() {
+  // open cfp auth dialog on the 'login' event
+  window.addEventListener('login', function() {
     app.$.authDialog.open();
-  }
+  });
 
-  // perform a log-out
-  app.logout = function() {
+  // perform a log-out on the 'logout' event
+  window.addEventListener('logout', function() {
     app.$.auth.signOut()
     .then(function(e) {
       app.log(e);
@@ -86,7 +86,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.message("Logout failed!");
       app.fire('logout-failure');
     });
-  }
+  });
 
   // bubble login-success to the login dialog
   window.addEventListener('login-success', function(e) {
