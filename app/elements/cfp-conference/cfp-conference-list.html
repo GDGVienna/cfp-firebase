@@ -21,8 +21,15 @@
         @apply(--layout-wrap);
         @apply(--layout-horizontal);
       };
-      div.conferences paper-material {
-        width: 480px;
+      @media all and (min-width: 0) and (max-width: 500px) {
+        div.conferences paper-material {
+          max-width: 450px;
+        }
+      };
+      @media all and (min-width: 501px) {
+        div.conferences paper-material {
+          width: 450px;
+        }
       };
       div.conferences table th {
         text-align: left;
