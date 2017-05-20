@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../elements/cfp-profile/cfp-profile-review.html">
 <link rel="import" href="../../elements/cfp-conference/cfp-conference-list.html">
 <link rel="import" href="../../styles/app-theme.html">
@@ -7,7 +8,15 @@
 
 <dom-module id="cfp-page-default">
   <template>
-    <style is="custom-style" include="shared-styles"></style>
+    <style is="custom-style" include="shared-styles">
+      paper-material.info {
+        background-color: #ffd;
+        cursor: pointer;
+      }
+      iron-icon.error {
+        color: #f00;
+      }
+    </style>
     <section>
       <paper-material elevation="1">
         <div style="overflow:auto;">
@@ -22,11 +31,11 @@
           <div class="clear:both;"></div>
         </div>
       </paper-material>
-      <paper-material hidden$="[[!shouldEditProfile]]">
-          <p>Please review your <a href="/profile">Profile</a> for details about your person!</p>
+      <paper-material class="info" hidden$="[[!shouldEditProfile]]" on-tap="_editProfile">
+          <p><iron-icon class="error" icon="create"></iron-icon> Please review your Profile for details about your person!</p>
       </paper-material>
-      <paper-material hidden$="[[isLoggedIn]]">
-          <p>Please login before submitting a proposal!</p>
+      <paper-material class="info" hidden$="[[isLoggedIn]]" on-tap="_openLogin">
+          <p><iron-icon class="error" icon="error"></iron-icon> Please login to submit a proposal!</p>
       </paper-material>
       <cfp-conference-list user="[[user]]" allow-edit="[[allowEdit]]" fire-app="[[fireapp]]" class="focus-target"></cfp-conference-list>
     </section>
@@ -70,6 +79,12 @@
         },
         _shouldEditProfile: function(isLoggedIn, profileEmpty) {
           return isLoggedIn && profileEmpty;
+        },
+        _openLogin: function() {
+          this.fire('login');
+        },
+        _editProfile: function() {
+          this.fire('profile-edit');
         }
       });
     })();

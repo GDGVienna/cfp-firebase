@@ -1,5 +1,7 @@
 
 <link rel="import" href="../../styles/app-theme.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../styles/shared-styles.html">
 
 <dom-module id="cfp-profile-menu">
@@ -26,7 +28,7 @@
     </paper-menu-button>
 
     <div id="signedOut" hidden$="[[isLoggedIn]]">
-      <paper-button on-tap="_handleLogin">Login</paper-button>
+      <paper-button on-tap="_handleLogin"><iron-icon icon="account-circle"></iron-icon> Login</paper-button>
     </div>
 
   </template>
