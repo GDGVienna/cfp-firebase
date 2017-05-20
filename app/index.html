@@ -73,33 +73,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <cfp-profile-check user-id="[[user.uid]]" requires-update="{{profileRequiresUpdate}}" is-completed="{{isProfileCompleted}}"></cfp-profile-check>
 
       <!-- Main Area -->
-      <paper-scroll-header-panel main id="headerPanelMain" fixed>
+      <app-header-layout id="appLayout">
         <!-- Main Toolbar -->
-        <paper-toolbar id="mainToolbar" elevation="2">
-
-          <span class="space"></span>
+        <app-header fixed shadow>
 
           <!-- Application name -->
-          <div class="middle middle-container" id="app-logo-name">
-            <img id="app-logo-icon" style="max-height:60%;width:auto;" src="/images/touch/icon-72x72.png" on-tap="redirectHome">
+          <app-toolbar>
+
+            <img style="max-height:60%;width:auto;cursor:pointer;" src="/images/touch/icon-72x72.png" on-tap="redirectHome">
             &nbsp;&nbsp;
-            <div class="app-name">{<$ appName $>}</div>
-          </div>
+            <div main-title>{<$ appName $>}</div>
+            <!-- Login / profile menu -->
+            <cfp-profile-menu is-logged-in="[[logged]]" user="[[user]]"></cfp-profile-menu>
+          </app-toolbar>
 
-          <!-- Application sub title -->
-          <!-- <div class="bottom bottom-container">
-            <div class="bottom-title">Conference talk proposals</div>
-          </div> -->
-
-          <!-- Login / profile menu -->
-          <cfp-profile-menu is-logged-in="[[logged]]" user="[[user]]"></cfp-profile-menu>
+        </app-header>
 
           <!-- Messages... -->
           <paper-toast id="appToast" text=""></paper-toast> 
-        </paper-toolbar>
 
         <!-- Main Content -->
-        <div class="content">
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
             <cfp-page-default user="[[user]]" profile-update-required="[[profileRequiresUpdate]]" is-logged-in="[[logged]]" fireapp="[[fireapp]]" data-route="conferences"></cfp-page-default>
 
@@ -116,8 +109,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <cfp-page-report fire-app="[[fireapp]]" conference-id="[[params.confid]]" is-logged-in="[[logged]]" data-route="report"></cfp-page-report>
 
           </iron-pages>
-        </div>
-      </paper-scroll-header-panel>
+      </app-header-layout>
 
     <paper-toast id="toast">
       <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
