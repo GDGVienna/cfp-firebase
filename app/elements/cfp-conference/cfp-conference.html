@@ -79,12 +79,6 @@
     (function() {
       'use strict';
 
-      var monthTxt = [
-            "January", "February", "March",
-            "April", "May", "June", "July",
-            "August", "September", "October",
-            "November", "December"];
-
       Polymer({
         is: 'cfp-conference',
 
@@ -106,31 +100,7 @@
           return this._isClosed(conf) ? "conf-closed" : "conf-open";
         },
         _confDates: function(conf) {
-          var from = new Date(conf.dateFrom);
-          var to = new Date(conf.dateTo);
-          var split = false;
-          var txt1 = "";
-          var txt2 = " " + to.getFullYear();
-          if (from.getFullYear() != to.getFullYear()) {
-            txt1 = " " + from.getFullYear();
-            split = true;
-          }
-          txt2 = " " + monthTxt[to.getMonth()] + txt2;
-          if (split || from.getMonth() != to.getMonth()) {
-            txt1 = " " + monthTxt[to.getMonth()] + txt1;
-            split = true;
-          }
-          txt2 = " " + to.getDate() + txt2;
-          if (split || from.getDate() != to.getDate()) {
-            txt1 = " " + from.getDate() + txt1;
-            split = true;
-          }
-          if (split) {
-            return txt1 + " - " + txt2;
-          }
-          else {
-            return txt2;
-          }
+          return util.epocrange2text(conf.dateFrom, conf.dateTo);
         },
         _isClosed: function(conf) {
           return Date.now() >= conf.cfpTo || Date.now() < conf.cfpFrom;
@@ -139,20 +109,14 @@
           var d = conf.cfpTo;
           var txt;
           if (Date.now() >= conf.cfpTo) {
-            txt = "Call for Papers closed on ";
-            d = conf.cfpTo;
+            return "Call for Papers closed on " + util.epoc2text(conf.cfpTo);
           }
           else if (Date.now() < conf.cfpFrom) {
-            txt = "Call for Papers will open on ";
-            d = conf.cfpFrom;
+            return "Call for Papers will open on " + util.epoc2text(conf.cfpFrom);
           }
           else {
-            txt = "Call for Papers closes on ";
-            d = conf.cfpTo;
+            txt = "Call for Papers closes on " + util.epoc2text(conf.cfpTo);
           }
-          d = new Date(d);
-          txt = txt + d.getDate() + " " + monthTxt[d.getMonth()] + " " + d.getFullYear();
-          return txt;
         },
         _confDisplayUrl: function(conf) {
           var urlArray = conf.url.split('/');

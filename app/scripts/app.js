@@ -163,4 +163,52 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
   });
 
+  // Util functions
+  var util = {};
+
+  var monthTxt = [
+          "January", "February", "March",
+          "April", "May", "June", "July",
+          "August", "September", "October",
+          "November", "December"];
+
+  util.date2text = function(d) {
+    return d.getDate() + " " + monthTxt[d.getMonth()] + " " + d.getFullYear();
+  };
+
+  util.epoc2text = function(e) {
+    return util.date2text(new Date(e));
+  };
+
+  util.daterange2text = function(from, to) {
+    var split = false;
+    var txt1 = "";
+    var txt2 = " " + to.getFullYear();
+    if (from.getFullYear() != to.getFullYear()) {
+      txt1 = " " + from.getFullYear();
+      split = true;
+    }
+    txt2 = " " + monthTxt[to.getMonth()] + txt2;
+    if (split || from.getMonth() != to.getMonth()) {
+      txt1 = " " + monthTxt[to.getMonth()] + txt1;
+      split = true;
+    }
+    txt2 = " " + to.getDate() + txt2;
+    if (split || from.getDate() != to.getDate()) {
+      txt1 = " " + from.getDate() + txt1;
+      split = true;
+    }
+    if (split) {
+      return txt1 + " - " + txt2;
+    }
+    else {
+      return txt2;
+    }
+  };
+
+  util.epocrange2text = function(f, t) {
+    return util.daterange2text(new Date(f), new Date(t));
+  };
+
+  window.util = util;
 })(document);
