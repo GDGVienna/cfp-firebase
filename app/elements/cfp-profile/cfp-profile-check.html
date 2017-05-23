@@ -39,8 +39,13 @@
             computed: "_requiresUpdate(_displayName, _firstName, _email, _bio)"
           }
         },
+        _isEmpty: function(x) {
+          return (typeof x != "string") || (x == "");
+        },
         _requiresUpdate: function(displayName, firstName, email, bio) {
-          return !displayName || !firstName || !email || !bio;
+          var isEmpty = this._isEmpty;
+          return isEmpty(displayName) || isEmpty(firstName) ||
+                 isEmpty(email) || isEmpty(bio);
         }
       });
     })();
