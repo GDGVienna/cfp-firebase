@@ -15,6 +15,7 @@
     </style>
     <firebase-document id="fbDoc" path="[[_firebasePath]]" data="{{_fireProposal}}"></firebase-document>
     <firebase-document id="confDoc" path="/conference/[[conferenceId]]" data="{{_conference}}"></firebase-document>
+    <img hidden$="[[!_conference.logo]]" style="max-height:75px; max-width:180px;" src="[[_conference.logo]]">
     <h2>[[_conference.name]]</h2>
     <p><i>[[_conference.topics]]</i></p>
     <h3 hidden$="[[!proposalId]]">Edit Proposal</h3>

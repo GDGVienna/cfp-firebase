@@ -50,7 +50,7 @@
           <paper-fab icon="list" title="Your proposals" class="fab-grey"></paper-fab>
         </div>
       </a>
-    <img style="max-height:50px; max-width:120px;" src="[[_confLogo]]">
+    <img hidden$="[[!conference.logo]]" style="max-height:50px; max-width:120px;" src="[[conference.logo]]">
     <h2>[[conference.name]]</h2>
     <p><i>[[conference.description]]</i></p>
     <table border="0">
@@ -89,10 +89,7 @@
         is: 'cfp-conference',
 
         properties: {
-          conference: {
-            type: Object,
-            observer: '_confLoaded'
-          },
+          conference: Object,
           userId: String,
           allowEdit: Boolean,
           fireApp: Object,
@@ -104,19 +101,6 @@
         },
         _indicateSubmit: function(conf, allowEdit) {
           return allowEdit && (Date.now() >= conf.cfpTo || Date.now() < conf.cfpFrom);
-        },
-        _confLoaded: function(conf) {
-          var that = this;
-          var app = this.fireApp;
-          var path = conf && conf.logo;
-          if (path && app) {
-            var st = app.storage();
-            var pRef = st.refFromURL("gs://{<$ firebase.storageBucket $>}" + path);
-            pRef.getDownloadURL().then(function(url) {
-              that.set('_confLogo', url);
-            });
-          }
-          return "";
         },
         _confCssClass: function(conf) {
           return this._isClosed(conf) ? "conf-closed" : "conf-open";
