@@ -41,18 +41,9 @@
         is: 'cfp-profile-menu',
 
         properties: {
-          isLoggedIn: {
-            type: Boolean,
-            notify: true,
-          },
-          user: {
-            type: Object,
-            notify: true
-          },
-          _isMobile: {
-            type: Boolean,
-            notify: true
-          }
+          isLoggedIn: Boolean,
+          user: Object,
+          _isMobile: Boolean
         },
         _handleLogin: function() {
           this.fire("login");

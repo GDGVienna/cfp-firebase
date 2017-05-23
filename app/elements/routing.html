@@ -35,59 +35,44 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     }
 
+    // generic routing function - generator
+    function toRoute(r) {
+      return function() {
+        app.route = r;
+        setFocus(app.route);
+      }
+    }
+
+    function toRouteWithData(r) {
+      return function(data) {
+        app.params = data.params;
+        app.route = r;
+        setFocus(app.route);
+      }
+    }
+
     // Routes
     page('*', scrollToTop, function(ctx, next) {
       next();
     });
 
-    page('/', function() {
-      app.route = 'conferences';
-      setFocus(app.route);
-    });
+    page('/', toRoute('conferences'));
 
-    page(app.baseUrl, function() {
-      app.route = 'conferences';
-      setFocus(app.route);
-    });
+    page(app.baseUrl, toRoute('conferences'));
 
-    page('/conferences', function() {
-      app.route = 'conferences';
-      setFocus(app.route);
-    });
+    page('/conferences', toRoute('conferences'));
 
-    page('/profile', function() {
-      app.route = 'profile';
-      setFocus(app.route);
-    });
+    page('/profile', toRoute('profile'));
 
-    page('/speakers', function() {
-      app.route = 'speakers';
-      setFocus(app.route);
-    });
+    page('/speakers', toRoute('speakers'));
 
-    page('/conference/:confid/proposals', function(data) {
-      app.route = 'proposals';
-      app.params = data.params;
-      setFocus(app.route);
-    });
+    page('/conference/:confid/proposals', toRouteWithData('proposals'));
 
-    page('/conference/:confid/proposal', function(data) {
-      app.route = 'proposal';
-      app.params = data.params;
-      setFocus(app.route);
-    });
+    page('/conference/:confid/proposal', toRouteWithData('proposal'));
 
-    page('/review/:confid', function(data) {
-      app.route = 'review';
-      app.params = data.params;
-      setFocus(app.route);
-    });
+    page('/review/:confid', toRouteWithData('review'));
 
-    page('/report/:confid', function(data) {
-      app.route = 'report';
-      app.params = data.params;
-      setFocus(app.route);
-    });
+    page('/report/:confid', toRouteWithData('report'));
   
     // 404
     page('*', function() {

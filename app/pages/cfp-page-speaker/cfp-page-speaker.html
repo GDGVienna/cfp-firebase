@@ -58,41 +58,20 @@
       Polymer({
         is: 'cfp-page-speaker',
         properties: {
-          fireApp: {
-            type: Object,
-            notify: true,
-            value: {}
-          },
-          isLoggedIn: {
-            type: Boolean,
-            notify: true
-          },
-          _speakersDoc: {
-            type: Object,
-            notify: true
-          },
-          _reviewDoc: {
-            type: Object,
-            notify: true
-          },
+          fireApp: Object,
+          isLoggedIn: Boolean,
+          _speakersDoc: Object,
+          _reviewDoc: Object,
           _hasAccess: {
             type: Boolean,
-            computed: "_isNotNull(_speakers)",
-            notify: true
+            computed: "_isNotNull(_speakers)"
           },
-          _speakers: {
-            type: Array,
-            notify: true
-          },
+          _speakers: Array,
           _filterNewOnly: {
             type: Boolean,
-            notify: true,
             observer: "_forceReload"
           },
-          _restampFlag: {
-            type: Boolean,
-            value: true
-          }
+          _restampFlag: Boolean
         },
         observers: [
           "_mergeSpeakers(_speakersDoc, _reviewDoc)"

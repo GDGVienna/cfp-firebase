@@ -91,32 +91,13 @@
         properties: {
           conference: {
             type: Object,
-            notify: true,
             observer: '_confLoaded'
           },
-          userId: {
-            type: String,
-            notify: true,
-            value: 'undefined'
-          },
-          allowEdit: {
-            type: Boolean,
-            notify: true,
-            value: false
-          },
-          fireApp: {
-            type: Object,
-            notify: true,
-            value: {}
-          },
-          _confLogo: {
-            type: String,
-            notify: true
-          },
-          _proposals: {
-            type: Array,
-            notify: true
-          }
+          userId: String,
+          allowEdit: Boolean,
+          fireApp: Object,
+          _confLogo: String,
+          _proposals: Array
         },
         _showSubmit: function(conf, allowEdit) {
           return allowEdit && Date.now() < conf.cfpTo && Date.now() >= conf.cfpFrom;

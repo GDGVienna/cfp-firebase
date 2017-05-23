@@ -44,52 +44,16 @@
           Polymer.PaperDialogBehavior
         ],
         properties: {
-          fireApp: {
-            type: Object,
-            notify: true,
-            value: {}
-          },
-          speakerId: {
-            type: String,
-            notify: true
-          },
-          _speakerDoc: {
-            type: Object,
-            notify: true
-          },
-          _reviewDoc: {
-            type: Object,
-            notify: true,
-          },
-          _firstName: {
-            type: String,
-            notify: true,
-            value: ''
-          },
-          _displayName: {
-            type: String,
-            notify: true,
-            value: ''
-          },
-          _email: {
-            type: String,
-            notify: true,
-            value: ''
-          },
-          _bio: {
-            type: String,
-            notify: true,
-            value: ''
-          },
-          _rating: {
-            type: Number,
-            notify: true,
-            value: 0
-          },
-          _reviewComment: {
-            type: String,
-            notify: true
-          }
+          fireApp: Object,
+          speakerId: String,
+          _speakerDoc: Object,
+          _reviewDoc: Object,
+          _firstName: String,
+          _displayName: String,
+          _email: String,
+          _bio: String,
+          _rating: Number,
+          _reviewComment: String
         },
         _saveRating: function(e) {
           var f = Polymer.dom(e);

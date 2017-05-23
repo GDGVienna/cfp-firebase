@@ -68,25 +68,10 @@
         is: 'cfp-proposal-list',
 
         properties: {
-          conferenceId: {
-            type: String,
-            notify: true,
-            value: 'undefined'
-          },
-          userId: {
-            type: String,
-            notify: true,
-            value: 'undefined'
-          },
-          _proposals: {
-            type: Array,
-            notify: true,
-            value: []
-          },
-          _conference: {
-            type: Object,
-            notify: true
-          }
+          conferenceId: String,
+          userId: String,
+          _proposals: Array,
+          _conference: Object
         }
       });
     })();

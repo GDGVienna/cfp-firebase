@@ -87,10 +87,7 @@
           "login-failure": "_loginFailure"
         },
         properties: {
-          formType: {
-            type: Number,
-            value: 0
-          },
+          formType: Number,
           isLogin: {
             type: Boolean,
             computed: "_isLogin(formType)"
@@ -99,26 +96,15 @@
             type: Boolean,
             computed: "_isSignup(formType)"
           },
-          email: {
-            type: String,
-            notify: true
-          },
-          password: {
-            type: String,
-            notify: true
-          },
-          password2: {
-            type: String,
-            notify: true
-          },
+          email: String,
+          password: String,
+          password2: String,
           passwordMatch: {
             type: Boolean,
-            notify: true,
             computed: "_isEqual(password, password2)"
           },
           passwordEmpty: {
             type: Boolean,
-            notify: true,
             computed: "_isEmpty(password)"
           }
         },
@@ -144,14 +130,12 @@
          if (e && e.target && e.target.getAttribute('provider')) {
             this.fire('login-provider',
               { provider: e.target.getAttribute('provider') });
-            // this.close();
           }
         },
         _handleLogin: function(e) {
           this.fire('login-password',
             { email: this.$.email.value,
               password: this.$.password.value });
-          // this.close();
         },
         _handleReset: function(e) {
           this.fire('reset-password',
@@ -162,11 +146,10 @@
           this.formType = 1;
         },
         _loginSuccess: function(e) {
-          console.log("Got success message!");
           this.close();
         },
         _loginFailure: function(e) {
-          console.log("Got failure message!");
+          // now some kind of "blinking" would be cool ...
         }
       });
     })();

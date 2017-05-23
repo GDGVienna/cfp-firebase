@@ -62,59 +62,27 @@
       Polymer({
         is: 'cfp-page-review-conference',
         properties: {
-          conferenceId: {
-            type: String,
-            notify: true
-          },
-          fireApp: {
-            type: Object,
-            notify: true,
-            value: {}
-          },
-          userId: {
-            type: String,
-            notify: true
-          },
-          isLoggedIn: {
-            type: Boolean,
-            notify: true
-          },
-          _proposalDoc: {
-            type: Object,
-            notify: true
-          },
-          _reviewDoc: {
-            type: Object,
-            notify: true
-          },
+          conferenceId: String,
+          fireApp: Object,
+          userId: String,
+          isLoggedIn: Boolean,
+          _proposalDoc: Object,
+          _reviewDoc: Object,
           _hasAccess: {
             type: Boolean,
-            computed: "_isNotNull(_proposals)",
-            notify: true
+            computed: "_isNotNull(_proposals)"
           },
           _proposals: {
             type: Array,
-            computed: "_flattenTwoDim(_proposalDoc)",
-            notify: true
+            computed: "_flattenTwoDim(_proposalDoc)"
           },
-          _proposalsMerged: {
-            type: Array,
-            // computed: "_mergePropsReviews(_proposals, _reviewDoc)",
-            notify: true
-          },
-          _accessKey: {
-            type: String,
-            notify: true
-          },
+          _proposalsMerged: Array,
+          _accessKey: String,
           _filterNewOnly: {
             type: Boolean,
-            notify: true,
             observer: "_forceReload"
           },
-          _restampFlag: {
-            type: Boolean,
-            value: true
-          }
+          _restampFlag: Boolean
         },
         observers: [
           "_mergePropsReviews(_proposals, _reviewDoc)"

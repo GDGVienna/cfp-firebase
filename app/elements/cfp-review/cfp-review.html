@@ -50,52 +50,17 @@
           Polymer.PaperDialogBehavior
         ],
         properties: {
-          conferenceId: {
-            type: String,
-            notify: true
-          },
-          fireApp: {
-            type: Object,
-            notify: true,
-            value: {}
-          },
-          userId: {
-            type: String,
-            notify: true
-          },
-          speakerId: {
-            type: String,
-            notify: true
-          },
-          proposalId: {
-            type: String,
-            notify: true
-          },
-          _proposalDoc: {
-            type: Object,
-            notify: true
-          },
-          _reviewDoc: {
-            type: Object,
-            notify: true,
-          },
-          _conferenceDoc: {
-            type: Object,
-            notify: true
-          },
-          _rating: {
-            type: Number,
-            notify: true,
-            value: 0
-          },
-          _comment: {
-            type: String,
-            notify: true
-          },
-          _duration: {
-            type: String,
-            notify: true
-          }
+          conferenceId: String,
+          fireApp: Object,
+          userId: String,
+          speakerId: String,
+          proposalId: String,
+          _proposalDoc: Object,
+          _reviewDoc: Object,
+          _conferenceDoc: Object,
+          _rating: Number,
+          _comment: String,
+          _duration: String
         },
         observers: [
           "_showDuration(_proposalDoc, _conferenceDoc)"

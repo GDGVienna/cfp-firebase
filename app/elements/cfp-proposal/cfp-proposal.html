@@ -44,36 +44,17 @@
         is: 'cfp-proposal',
 
         properties: {
-          conferenceId: {
-            type: String,
-            notify: true
-          },
-          proposalId: {
-            type: String,
-            notify: true,
-            value: '',
-            observer: '_resetForm'
-          },
-          userId: {
-            type: String,
-            notify: true
-          },
-          _proposal: {
-            type: Object,
-            notify: true
-          },
+          conferenceId: String,
+          proposalId: String,
+          userId: String,
+          _proposal: String,
           _fireProposal: {
             type: Object,
-            notify: true,
             observer: '_loadFireProposal'
           },
-          _conference: {
-            type: Object,
-            notify: true
-          },
+          _conference: Object,
           _firebasePath: {
             type: String,
-            notify: true,
             computed: '_computeFirebasePath(conferenceId, userId, proposalId)'
           }
         },
@@ -108,7 +89,7 @@
           }
           // save the proposal
           // this.set('_fireProposal', this._proposal);
-          this.$.fbDoc.save('/proposal/' + this.conferenceId + '/' + this.userId, this.proposalId);
+          this.$.fbDoc.saveValue('/proposal/' + this.conferenceId + '/' + this.userId, this.proposalId);
           this.fire('proposal-submit', {changed: true, message: 'Proposal saved'});
         },
         _cancel: function() {

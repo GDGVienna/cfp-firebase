@@ -42,28 +42,11 @@
         is: 'cfp-proposal-submit',
 
         properties: {
-          conferenceId: {
-            type: String,
-            notify: true
-          },
-          userId: {
-            type: String,
-            notify: true
-          },
-          fireApp: {
-            type: Object,
-            notify: true,
-            value: {}
-          },
-          _proposal: {
-            type: Object,
-            notify: true,
-            value: {}
-          },
-          _conference: {
-            type: Object,
-            notify: true
-          }
+          conferenceId: String,
+          userId: String,
+          fireApp: Object,
+          _proposal: Object,
+          _conference: Object
         },
         _confDurations: function(conference) {
           if (conference && conference.durations) {

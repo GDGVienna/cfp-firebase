@@ -1,7 +1,6 @@
 <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../elements/cfp-profile/cfp-profile-review.html">
 <link rel="import" href="../../elements/cfp-conference/cfp-conference-list.html">
 <link rel="import" href="../../styles/app-theme.html">
 <link rel="import" href="../../styles/shared-styles.html">
@@ -47,30 +46,16 @@
       Polymer({
         is: 'cfp-page-default',
         properties: {
-          user: {
-            type: Object,
-            notify: true
-          },
-          profileUpdateRequired: {
-            type: Boolean,
-            notify: true
-          },
-          fireapp: {
-            type: Object,
-            notify: true
-          },
-          isLoggedIn: {
-            type: Boolean,
-            notify: true
-          },
+          user: Object,
+          profileUpdateRequired: Boolean,
+          fireapp: Object,
+          isLoggedIn: Boolean,
           allowEdit: {
             type: Boolean,
-            notify: true,
             computed: "_isEditAllowed(isLoggedIn, profileUpdateRequired)"
           },
           shouldEditProfile: {
             type: Boolean,
-            notify: true,
             computed: "_shouldEditProfile(isLoggedIn, profileUpdateRequired)"
           }
         },

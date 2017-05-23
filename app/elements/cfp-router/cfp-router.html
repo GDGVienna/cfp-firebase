@@ -16,22 +16,10 @@
         is: 'cfp-router',
 
         properties: {
-          route: {
-            type: Object,
-            notify: true
-          },
-          defaultPage: {
-          	type: Boolean,
-          	notify: true
-          },
-          data: {
-          	type: Object,
-          	notify: true
-          },
-          subData: {
-          	type: Object,
-          	notify: true
-          }
+          route: Object,
+          defaultPage: Boolean,
+          data: Object,
+          subData: Object
         },
         observers: [
           '_routeChanged(route.*)'

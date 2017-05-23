@@ -32,7 +32,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // Listen for template bound event to know when bindings
   // have resolved and content has been stamped to the page
   app.addEventListener('dom-change', function() {
-    app.log('Our app is ready to rock!');
+    // app.log('Our app is ready to rock!');
   });
   
   // See https://github.com/Polymer/polymer/issues/1381
@@ -78,7 +78,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     app.$.auth.signOut()
     .then(function(e) {
       app.log(e);
-      app.message("Logout worked!");
+      app.message("You are now logged out");
       app.fire('logout-success');
     })
     .catch(function(e) {
@@ -105,7 +105,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     .then(function(e) {
       app.log(e);
       app.log(app.$.auth.user);
-      app.message("Login with provider worked");
+      app.message("Thanks for logging in!");
       app.fire('login-success');
     })
     .catch(function(e) {
@@ -113,12 +113,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.$.auth.signInWithRedirect()
       .then(function(e) {
         app.log(e);
-        app.message("Login with provider worked");
+        app.message("Thanks for logging in!");
         app.fire('login-success');
       })
       .catch(function(e) {
         app.log(e);
-        app.message("Login with provider failed");
+        app.message("Login failed");
         app.fire('login-failure');
       });
     });
@@ -132,11 +132,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       e.detail.password
     )
     .then(function(e) {
-      app.message("Login with password worked");
+      app.message("Thanks for logging in!");
       app.fire('login-success');
     })
     .catch(function(e) {
-      app.message("Login with password failed");
+      app.message("Login failed. Did you provide the correct email or password?");
       app.fire('login-failure');
     });
   });
@@ -154,11 +154,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       e.detail.password
     )
     .then(function(e) {
-      app.message("You are registered successfully");
+      app.message("Thank you for registering!");
       app.fire('register-success');
     })
     .catch(function(e) {
-      app.message("Registering failed");
+      app.message("Sign-Up failed");
       app.fire('register-failure');
     });
   });

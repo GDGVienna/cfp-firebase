@@ -67,23 +67,10 @@
         is: 'cfp-conference-list',
 
         properties: {
-          conferences: {
-            type: Array,
-            notify: true
-          },
-          allowEdit: {
-            type: Boolean,
-            notify: true
-          },
-          user: {
-            type: Object,
-            notify: true
-          },
-          fireApp: {
-            type: Object,
-            notify: true,
-            value: {}
-          }
+          conferences: Array,
+          allowEdit: Boolean,
+          user: Object,
+          fireApp: Object
         },
         _filter: function(a) {
           return a.dateTo > Date.now();
@@ -100,7 +87,7 @@
             }
             return -1;
           }
-          // we already know that a is not open ...
+          // we already know that "a" is not open ...
           if (bIsOpen) {
             return 1;
           }

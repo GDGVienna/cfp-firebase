@@ -38,22 +38,10 @@
         is: 'cfp-profile',
 
         properties: {
-          userId: {
-            type: String,
-            notify: true
-          },
-          _profile: {
-            type: Object,
-            notify: true
-          },
-          _xProfile: {
-            type: Object,
-            notify: true
-          },
-          _fireProfile: {
-            type: Object,
-            notify: true
-          }
+          userId: String,
+          _profile: Object,
+          _xProfile: Object,
+          _fireProfile: Object
         },
         observers: [
           '_loadProfile(_fireProfile, _xProfile)'

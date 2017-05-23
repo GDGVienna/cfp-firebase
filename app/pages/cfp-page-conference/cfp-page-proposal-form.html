@@ -20,22 +20,10 @@
       Polymer({
         is: 'cfp-page-proposal-form',
         properties: {
-          user: {
-            type: Object,
-            notify: true
-          },
-          isLoggedIn: {
-            type: Boolean,
-            notify: true
-          },
-          conferenceId: {
-            type: String,
-            notify: Boolean
-          },
-          fireapp: {
-            type: Object,
-            notify: true
-          }
+          user: Object,
+          isLoggedIn: Boolean,
+          conferenceId: String,
+          fireapp: Object
         },
       });
     })();
