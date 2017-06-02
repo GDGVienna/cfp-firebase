@@ -124,6 +124,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
   });
 
+  // act on proposal submission
+  window.addEventListener('proposal-submit', function(e) {
+    app.message('Thank you for your proposal!');
+  })
+
   // act on login with password
   window.addEventListener('login-password', function(e) {
     app.log(e);

@@ -20,8 +20,8 @@
     <p><i>[[_conference.topics]]</i></p>
     <p hidden$="[[!_conference.instructionsUrl]]"><a href="[[_conference.instructionsUrl]]" target="_blank">Instructions</a></p>
     <h3>Submit Proposal</h3>
-    <div id="container">
-      <paper-input required label="Title" value="{{_proposal.title}}"></paper-input>
+    <form is="iron-form" id="container">
+      <paper-input required label="Title (*)" placeholder="Talk title - keep it short and interesting" value="{{_proposal.title}}"></paper-input>
       <paper-dropdown-menu required label="Duration">
         <paper-listbox class="dropdown-content" selected="{{_proposal.duration}}">
           <template is="dom-repeat" items="[[_confDurations(_conference)]]" as="duration">
@@ -29,11 +29,11 @@
           </template>
         </paper-listbox>
       </paper-dropdown-menu>
-      <paper-textarea required rows="3" label="Abstract" value="{{_proposal.abstract}}"></paper-textarea>
-      <paper-textarea rows="2" label="Comment" value="{{_proposal.comment}}"></paper-textarea>
+      <paper-textarea required rows="5" label="Abstract (*)" placeholder="2-3 sentences explaining your talk proposal. What will you be talking about? What should the audience know before coming to your talk? What will they have learned from your talk? Keep it short and interesting. This will be published as description of your talk." value="{{_proposal.abstract}}"></paper-textarea>
+      <paper-textarea rows="3" label="Instructions for Reviewers" placeholder="Any special instructions, e.g. something in the room setup you need? You can also use this field for links to slides (if existing) or existing video recordings. This field is optional - leave it empty if there is nothing special to tell." value="{{_proposal.comment}}"></paper-textarea>
       <paper-button raised on-tap="_submit">Submit</paper-button>
       <paper-button raised on-tap="_cancel">Cancel</paper-button>
-    </div>
+    </form>
   </template>
 
   <script>
@@ -47,7 +47,15 @@
           conferenceId: String,
           userId: String,
           fireApp: Object,
-          _proposal: Object,
+          _proposal: {
+            type: Object,
+            value: {
+              title: '',
+              comment: '',
+              duration: undefined,
+              abstract: ''
+            }
+          },
           _conference: Object
         },
         _confDurations: function(conference) {
@@ -64,15 +72,19 @@
           return util.epocrange2text(conf.dateFrom, conf.dateTo);
         },
         _submit: function() {
-          // add the user id if needed
-          if (!this._proposal.speaker) {
-            this._proposal.speaker = this.userId;
+          // validate
+          if (this.$.container.validate()) {
+            // add the user id if needed
+            if (!this._proposal.speaker) {
+              this._proposal.speaker = this.userId;
+            }
+
+            // save the proposal
+            this.fireApp.database().ref('/proposal/' + this.conferenceId + '/' + this.userId).push(this._proposal);
+            // reset form
+            this._proposal = {};
+            this.fire('proposal-submit', {changed: true, message: 'Proposal submitted'});
           }
-          // save the proposal
-          this.fireApp.database().ref('/proposal/' + this.conferenceId + '/' + this.userId).push(this._proposal);
-          // reset form
-          this._proposal = {};
-          this.fire('proposal-submit', {changed: true, message: 'Proposal submitted'});
         },
         _cancel: function() {
           this.fire('proposal-submit', {changed: false, message: 'Proposal not submitted'});
