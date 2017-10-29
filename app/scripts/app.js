@@ -90,12 +90,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   // bubble login-success to the login dialog
   window.addEventListener('login-success', function(e) {
-    app.$.authDialog.fire('login-success', e.details);
+    app.$.authDialog.fire('login-succeeded', e.details);
   });
 
   // bubble login-failure to the login dialog
   window.addEventListener('login-failure', function(e) {
-    app.$.authDialog.fire('login-failure', e.details);
+    app.$.authDialog.fire('login-failed', e.details);
   });
   
   // act on login via provider
