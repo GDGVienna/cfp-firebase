@@ -54,11 +54,11 @@
         <p hidden$="[[isSignup]]">or provide your email and password:</p>
         <p hidden$="[[isLogin]]">or provide your email and choose a password:</p>
         <gold-email-input id="email" value="{{email}}" auto-validate></gold-email-input>
-        <paper-input type="password" label="Password" value="{{password}}" id="password"></paper-input>
-        <paper-input type="password" error-message="The two password fields do not match" invalid="[[!passwordMatch]]" label="Repeat Password" value="{{password2}}" id="password2" hidden$="[[isLogin]]"></paper-input>
+        <paper-input type="password" label="Password" minlength="6" value="{{password}}" id="password"></paper-input>
+        <paper-input type="password" error-message="The two password fields do not match" invalid="[[!passwordMatch]]" label="Repeat Password" minlength="6" value="{{password2}}" id="password2" hidden$="[[isLogin]]"></paper-input>
         <br>
         <div hidden$="[[isLogin]]">
-          <paper-button disabled="[[!passwordMatch]]" raised>Sign-Up</paper-button>
+          <paper-button disabled="[[!passwordMatch]]" raised on-tap="_handleSignup">Sign-Up</paper-button>
           <paper-button raised dialog-dismiss>Cancel</paper-button>
           <paper-button on-tap="_switchToLogin">Existing User</paper-button>
         </div>
@@ -83,6 +83,7 @@
           "_openedOrClosed(opened)"
         ],
         listeners: {
+          "register-succeeded": "_loginSuccess",
           "login-succeeded": "_loginSuccess",
           "login-failed": "_loginFailure"
         },
@@ -131,6 +132,11 @@
             this.fire('login-provider',
               { provider: e.target.getAttribute('provider') });
           }
+        },
+        _handleSignup: function(e) {
+          this.fire('signup-password',
+            { email: this.$.email.value,
+              password: this.$.password.value });
         },
         _handleLogin: function(e) {
           this.fire('login-password',

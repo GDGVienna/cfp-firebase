@@ -83,9 +83,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     })
     .catch(function(e) {
       app.log(e);
-      app.message("Logout failed!");
+      if (e && e.message) {
+        app.message("Logout failed: " + e.message);
+      }
+      else {
+        app.message("Logout failed!");
+      }
       app.fire('logout-failure');
     });
+  });
+
+  // bubble register-success to the login dialog
+  window.addEventListener('register-success', function(e) {
+    app.$.authDialog.fire('register-succeeded', e.details);
   });
 
   // bubble login-success to the login dialog
@@ -109,7 +119,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.fire('login-success');
     })
     .catch(function(e) {
-      console.log(e);
+      app.log(e);
       app.$.auth.signInWithRedirect()
       .then(function(e) {
         app.log(e);
@@ -118,7 +128,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       })
       .catch(function(e) {
         app.log(e);
-        app.message("Login failed");
+        if (e && e.message) {
+          app.message("Login failed: " + e.message);
+        }
+        else {
+          app.message("Login failed!");
+        }
         app.fire('login-failure');
       });
     });
@@ -141,7 +156,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.fire('login-success');
     })
     .catch(function(e) {
-      app.message("Login failed. Did you provide the correct email or password?");
+      if (e && e.message) {
+        app.message("Login failed: " + e.message);
+      }
+      else {
+        app.message("Login failed. Did you provide the correct email or password?");
+      }
       app.fire('login-failure');
     });
   });
@@ -163,7 +183,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.fire('register-success');
     })
     .catch(function(e) {
-      app.message("Sign-Up failed");
+      app.log(e);
+      if (e && e.message) {
+        app.message("Sign-Up failed: " + e.message);
+      }
+      else {
+        app.message("Sign-Up failed!");
+      }
       app.fire('register-failure');
     });
   });
